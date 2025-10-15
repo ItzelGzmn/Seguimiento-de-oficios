@@ -1,0 +1,91 @@
+/* Sidebar Styles */
+.menu__side {
+    width: 250px;
+    height: 100vh;
+    background: #691B31;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: white;
+    font-size: 18px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    overflow-y: auto;
+}
+
+.menu__side_move {
+    left: 0 !important;
+}
+
+.sidebar {
+    padding: 20px;
+}
+
+.btn-menu {
+    background: transparent;
+    border: 2px solid transparent;
+    color: white;
+    text-align: left;
+    padding: 12px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.btn-menu:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #bc955b;
+    color: white;
+    transform: translateX(5px);
+}
+
+.btn-active {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ddc9a3;
+    color: #ddc9a3;
+    font-weight: 600;
+}
+
+.btn-menu i {
+    font-size: 1.2em;
+    width: 30px;
+}
+
+/* Responsive Sidebar */
+@media (max-width: 992px) {
+    .menu__side {
+        left: -250px;
+        width: 250px;
+    }
+    
+    .menu__side_move {
+        left: 0;
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .body_move {
+        margin-left: 0;
+    }
+}
+
+/* Scrollbar personalizado para sidebar */
+.menu__side::-webkit-scrollbar {
+    width: 5px;
+}
+
+.menu__side::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu__side::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.menu__side::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}

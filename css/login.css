@@ -1,0 +1,69 @@
+.btn-primary {/*  boton */
+  border-radius: 25px; 
+  padding: 10px; 
+  font-size: 18px;
+  color: #F2F2F3; 
+  transition: background-color 0.3s ease; 
+  background-color: #691b31; /*  color */
+  border: 2px solid #F2F2F3; 
+
+}
+.btn-primary:hover {
+  background-color: #BC955B; /*  color */
+  border-color: #6F7271; 
+}
+/* Animación de entrada para el contenedor de login */
+.login-container {
+  animation-name: fadeIn; 
+}
+
+  /* fondito de inicio sesion */
+.login-container {
+  width: 100%;
+  max-width: 500px; 
+  padding: 100px 30px; 
+  background-color: rgb(255, 255, 255);
+  border-radius: 150px 10px 150px 10px; 
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  margin: 10px auto; 
+  animation-duration: 1s;
+  animation-timing-function: ease-in-out;
+
+}
+
+ /* la otra cosa donde no se meten datos */
+ .welcome-container h1 {
+  font-size: 0px; 
+  margin-bottom: 1px; 
+  color: #fff; /* color del texto */
+  font-family: 'Arial', sans-serif;
+}
+.welcome-container p {
+  margin-bottom: 1px;
+  color: #fff;/*color del texto */
+  font-family: 'Arial', sans-serif;
+  font-size: 0px; 
+}
+.welcome-container {
+  animation-name: fadeIn; 
+}
+ .welcome-container {
+  width: 100%; 
+  max-width: 500px;
+  padding: 80px 20px; 
+  background-color: #691b31; /*color */
+  border-radius: 10px 150px 10px 150px; 
+  box-shadow: 0px 0px 20px rgba(105, 27, 49, 0); 
+  text-align: center; 
+  margin: 10px; 
+  animation-duration: 1s; 
+  animation-timing-function: ease-in-out; 
+  }
+  /* Estilo del logo */
+.logo-img {
+  max-width: 100%; 
+  height: auto; 
+  margin-top: -10px; 
+  border-radius: 10px; 
+}

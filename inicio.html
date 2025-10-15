@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seguimiento de oficios - Inicio</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/inicio.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/user-bubble.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css">
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/js/shepherd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body id="body">
+  <!-- Navbar con burbuja de usuario -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="inicio.html">Seguimiento de Oficios</a>
+      
+      <div class="navbar-nav ms-auto">
+        <!-- Burbuja de usuario -->
+        <div id="userBubble" class="user-bubble d-flex align-items-center">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-info ms-2">
+            <span class="user-name d-block" id="userName">Usuario</span>
+            <span class="user-email d-block" id="userEmail">email@ejemplo.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <!-- Overlay para móviles -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Botón para abrir/cerrar el menú (solo visible en móviles) -->
+  <button id="btn_open" class="btn btn-light position-fixed" style="left:10px; bottom:10px; z-index:1100;">
+    <span class="bi bi-list"></span>
+  </button>
+
+  <!-- Sidebar -->
+<div id="menu_side" class="menu__side sidebar d-flex flex-column">
+    <img src="img/logo.webp" alt="Logo" style="width:120px; margin:0 auto 20px auto; display:block;">
+    <a href="inicio.html" class="btn btn-menu mb-2 btn-active"><i class="bi bi-house me-2"></i> Inicio</a>
+    <a href="subiroficios.html" class="btn btn-menu mb-2"><i class="bi bi-upload me-2"></i> Subir oficios</a>
+    <a href="destacados.html" class="btn btn-menu mb-2"><i class="bi bi-star me-2"></i> Destacados</a>
+    <a href="borradores.html" class="btn btn-menu mb-2"><i class="bi bi-file-earmark me-2"></i> Borradores</a>
+    <a href="calendario.html" class="btn btn-menu mb-2"><i class="bi bi-calendar me-2"></i> Calendario</a>
+   <a href="#" id="logoutBtn" class="btn btn-menu mt-auto logout-btn">
+    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+</a>
+</div>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    <div class="white-container mb-4">
+      <h1 id="main-title" class="mb-1">
+        <i class="bi bi-house" style="color: #691B31;"></i> Bienvenidos al Sistema de Seguimiento de Oficios
+      </h1>
+      <p class="text-muted">Gestiona y da seguimiento a todos tus oficios en un solo lugar</p>
+      
+      <!-- Filtros y búsqueda -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="buscarBorrador" class="form-control" placeholder="Buscar oficio...">
+          </div>
+        </div>
+      </div>
+
+ <!-- Filtros por PRIORIDAD Y CATEGORÍAS -->
+<div class="mt-3">
+  <div class="priority-filters d-flex gap-3">
+    <div class="stat-card p-2 text-center priority-card active" data-priority="todos" id="prioTodos">
+      <div class="stat-number" id="prioTodosNum">--</div>
+      <div class="stat-title">Todos</div>
+    </div>
+    <div class="stat-card p-2 text-center priority-card" data-priority="alta" id="prioAlta">
+      <div class="stat-number" id="prioAltaNum">--</div>
+      <div class="stat-title">Prioridad Alta</div>
+    </div>
+    <div class="stat-card p-2 text-center priority-card" data-priority="media" id="prioMedia">
+      <div class="stat-number" id="prioMediaNum">--</div>
+      <div class="stat-title">Prioridad Media</div>
+    </div>
+    <div class="stat-card p-2 text-center priority-card" data-priority="baja" id="prioBaja">
+      <div class="stat-number" id="prioBajaNum">--</div>
+      <div class="stat-title">Prioridad Baja</div>
+    </div>
+    <div class="stat-card p-2 text-center category-card" data-category="externos" id="cardExternos">
+      <div class="stat-number" id="externosNum">--</div>
+      <div class="stat-title">Externos</div>
+    </div>
+    <div class="stat-card p-2 text-center category-card" data-category="internos" id="cardInternos">
+      <div class="stat-number" id="internosNum">--</div>
+      <div class="stat-title">Internos</div>
+    </div>
+    <div class="stat-card p-2 text-center category-card" data-category="completados" id="cardCompletados">
+      <div class="stat-number" id="completadosNum">--</div>
+      <div class="stat-title">Completados</div>
+    </div>
+  </div>
+</div>
+
+      <!-- Tabla de oficios -->
+      <div class="table-container mt-4">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>No. de Oficio</th>
+              <th>Fecha de Entrega</th>
+              <th>Fecha de Envío</th>
+              <th>Remitente</th>
+              <th>Prioridad</th>
+              <th>Destacar</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="oficios-body">
+            <tr><td colspan="7" class="text-center">Cargando oficios...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-vino text-white">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle modal-icon me-2"></i>Confirmar eliminación</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar el oficio <strong id="oficioEliminarNumero">OF-2023-0542</strong>?</p>
+          <p class="text-muted">Esta acción no se puede deshacer. El oficio será eliminado permanentemente del sistema.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+          <button type="button" id="btnConfirmDelete" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para visualizar oficio -->
+  <div class="modal fade" id="viewOficioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-vino text-white">
+          <h5 class="modal-title"><i class="bi bi-file-text modal-icon me-2"></i>Detalles del Oficio</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="viewOficioContent">
+        
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cerrar
+          </button>
+          <button type="button" class="btn btn-primary" id="btnDownloadFromModal">
+            <i class="bi bi-download me-1"></i> Descargar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Ajusta esto si tu API corre en otra URL/puerto
+  const API_BASE = 'http://localhost:3002';
+
+  // ----- VARIABLES GLOBALES -----
+  const btnOpen = document.getElementById("btn_open");
+  const sideMenu = document.getElementById("menu_side");
+  const overlay = document.getElementById("overlay");
+  const logoutBtn = document.getElementById("logoutBtn"); // Asegúrate de que este ID existe en tu HTML
+  const oficiosBody = document.getElementById("oficios-body");
+  const priorityCards = document.querySelectorAll(".priority-card");
+  const categoryCards = document.querySelectorAll(".category-card");
+  const buscarBorrador = document.getElementById("buscarBorrador");
+  let oficiosCargados = [];
+  let oficioAEliminar = null;
+  let oficioAVisualizar = null;
+
+  // ----- FUNCIÓN DE LOGOUT CORREGIDA -----
+  /**
+   * Función reutilizable para cerrar sesión con confirmación y manejo de errores
+   */
+  async function logout(redirectUrl = 'index.html', confirmMessage = '¿Estás seguro de que deseas cerrar sesión?') {
+    try {
+      const result = await Swal.fire({
+        title: 'Cerrar sesión',
+        text: confirmMessage,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6f7271',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (!result.isConfirmed) {
+        return false;
+      }
+
+      Swal.fire({
+        title: 'Cerrando sesión...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // 1. Intentar cerrar sesión en el backend
+      try {
+        const response = await fetch('/auth/logout', { 
+          method: 'POST', 
+          credentials: 'include' 
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Logout backend exitoso:', data);
+        }
+      } catch (backendError) {
+        console.warn('No se pudo contactar al servidor para cerrar sesión:', backendError);
+        // Continuamos con la limpieza local aunque falle el backend
+      }
+
+      // 2. Limpiar almacenamiento local
+      clearUserData();
+
+      // 3. Redirigir al usuario
+      setTimeout(() => {
+        Swal.close();
+        window.location.href = redirectUrl;
+      }, 1000);
+      
+      return true;
+
+    } catch (error) {
+      console.error('Error durante el logout:', error);
+      
+      // Mostrar error al usuario pero proceder con el logout del frontend
+      Swal.fire({
+        icon: 'warning',
+        title: 'Aviso',
+        text: 'Error al contactar el servidor, pero se limpiaron los datos locales.',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        clearUserData();
+        window.location.href = redirectUrl;
+      });
+      
+      return false;
+    }
+  }
+
+  /**
+   * Limpia todos los datos de usuario del almacenamiento local
+   */
+  function clearUserData() {
+    // Limpiar localStorage
+    const itemsToRemove = [
+      'userToken', 'userData', 'session', 'authToken', 
+      'userProfile', 'userPreferences', 'loginTime',
+      'tutorialVisto', 'tutorialSubirVisto'
+    ];
+    
+    itemsToRemove.forEach(item => {
+      localStorage.removeItem(item);
+    });
+    
+    // Limpiar sessionStorage
+    sessionStorage.clear();
+    
+    // Limpiar cookies
+    clearCookies();
+  }
+
+  /**
+   * Limpia las cookies relacionadas con la autenticación
+   */
+  function clearCookies() {
+    const cookies = document.cookie.split(";");
+    
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      
+      // Eliminar cookies de autenticación
+      if (name.includes('auth') || name.includes('session') || name.includes('token')) {
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+    }
+  }
+
+  // Función para forzar logout (sin confirmación)
+  async function forceLogout() {
+    Swal.fire({
+      title: 'Sesión expirada',
+      text: 'Su sesión ha expirado. Será redirigido al login.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false
+    }).then(() => {
+      clearUserData();
+      window.location.href = 'index.html';
+    });
+  }
+
+  // ----- EVENT LISTENER PARA LOGOUT -----
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      logout();
+    });
+  } else {
+    console.warn('Botón de logout no encontrado. Asegúrate de tener un elemento con id="logoutBtn"');
+  }
+
+  // ----- TUTORIAL CON SHEPHERD.JS -----
+  function inicializarTutorial() {
+    const tour = new Shepherd.Tour({
+      defaultStepOptions: {
+        cancelIcon: { enabled: true },
+        classes: 'shadow-lg bg-white rounded p-3',
+        scrollTo: { behavior: 'smooth', block: 'center' },
+      },
+      useModalOverlay: true,
+    });
+
+    tour.addStep({
+      id: 'step-1',
+      text: 'Bienvenido 👋 Aquí puedes ver todos tus oficios y filtrarlos por prioridad o tipo.',
+      attachTo: { 
+        element: '.priority-filters', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-2',
+      text: 'Usa esta barra para buscar un oficio por número o remitente.',
+      attachTo: { 
+        element: '#buscarBorrador', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-3',
+      text: 'Desde este menú lateral puedes navegar entre secciones o cerrar sesión.',
+      attachTo: { 
+        element: '#menu_side', 
+        on: 'right' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Finalizar', 
+          action: tour.complete 
+        }
+      ]
+    });
+
+    return tour;
+  }
+
+  // ----- BOTÓN PARA INICIAR TUTORIAL -----
+  function agregarBotonTutorial() {
+    // Crear botón flotante para el tutorial
+    const botonTutorial = document.createElement('button');
+    botonTutorial.innerHTML = '<i class="bi bi-question-circle"></i>';
+    botonTutorial.className = 'btn btn-primary position-fixed';
+    botonTutorial.style.cssText = `
+      right: 20px;
+      bottom: 20px;
+      z-index: 1100;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+    `;
+    botonTutorial.title = 'Iniciar tutorial';
+
+    botonTutorial.addEventListener('click', function() {
+      const tour = inicializarTutorial();
+      tour.start();
+    });
+
+    document.body.appendChild(botonTutorial);
+  }
+
+  // ----- INICIAR TUTORIAL AUTOMÁTICAMENTE (OPCIONAL) -----
+  function iniciarTutorialAutomatico() {
+    // Solo iniciar automáticamente si es la primera vez
+    const tutorialVisto = localStorage.getItem('tutorialVisto');
+    
+    if (!tutorialVisto) {
+      setTimeout(() => {
+        const tour = inicializarTutorial();
+        tour.start();
+        localStorage.setItem('tutorialVisto', 'true');
+      }, 1000); // Pequeño delay para que cargue todo
+    }
+  }
+
+  // ----- MENU MÓVIL / OVERLAY -----
+  if (btnOpen && sideMenu && overlay) {
+    btnOpen.addEventListener("click", () => {
+      sideMenu.classList.toggle("open");
+      overlay.classList.toggle("active");
+    });
+    
+    overlay.addEventListener("click", () => {
+      sideMenu.classList.remove("open");
+      overlay.classList.remove("active");
+    });
+  }
+
+  // ----- AUTH -----
+  async function checkAuth() {
+    try {
+      const response = await fetch('/auth/check', { credentials: 'include' });
+      const data = await response.json();
+      if (data.loggedIn && data.user) {
+        showUserInfo(data.user);
+      } else {
+        window.location.href = '/login.html';
+      }
+    } catch (error) {
+      console.error('Error al verificar auth:', error);
+      window.location.href = '/login.html';
+    }
+  }
+
+  function showUserInfo(user) {
+    const avatar = document.getElementById('userAvatar');
+    const name = document.getElementById('userName');
+    const email = document.getElementById('userEmail');
+
+    if (name) name.textContent = `${user.nombre || ''} ${user.apellidos || ''}`.trim() || 'Usuario';
+    if (email) email.textContent = user.email || '';
+
+    if (avatar) {
+      const initials = getInitials(user.nombre, user.apellidos);
+      avatar.textContent = initials;
+      const color = getRandomColor(user.nombre || user.email || 'U');
+      avatar.style.backgroundColor = color;
+    }
+  }
+
+  function getInitials(nombre, apellidos) {
+    const firstInitial = nombre ? nombre.trim().charAt(0) : 'U';
+    const lastInitial = apellidos ? apellidos.trim().charAt(0) : '';
+    return `${firstInitial}${lastInitial}`.toUpperCase();
+  }
+
+  function getRandomColor(str) {
+    const colors = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#6f42c1', '#fd7e14'];
+    const index = str ? str.charCodeAt(0) % colors.length : 0;
+    return colors[index];
+  }
+
+  // Llamar autenticación al cargar
+  checkAuth();
+
+  // ----- NOTIFICACIONES -----
+  function mostrarNotificacion(mensaje, tipo = 'success') {
+    const notificacion = document.createElement("div");
+    notificacion.className = `alert alert-${tipo === 'error' ? 'danger' : tipo} alert-dismissible fade show`;
+    notificacion.setAttribute('role', 'alert');
+    notificacion.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1050;
+      min-width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    notificacion.innerHTML = `
+      ${mensaje}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    `;
+    document.body.appendChild(notificacion);
+    setTimeout(() => {
+      if (notificacion.parentNode) notificacion.parentNode.removeChild(notificacion);
+    }, 4000);
+  }
+
+  // ----- HELPERS para archivos -----
+  function parseArchivosField(field) {
+    if (!field) return [];
+    if (Array.isArray(field)) return field;
+    if (typeof field === 'string') {
+      field = field.trim();
+      try {
+        const parsed = JSON.parse(field);
+        if (Array.isArray(parsed)) return parsed;
+        if (typeof parsed === 'string') return [parsed];
+      } catch (e) {}
+      if (field.includes(',')) return field.split(',').map(s => s.trim()).filter(Boolean);
+      return [field];
+    }
+    return [];
+  }
+
+  // ----- UPDATE DESTACADO -----
+  async function updateDestacado(oficioId, nuevoEstado) {
+    try {
+      await fetch(`${API_BASE}/oficios/${oficioId}/destacar`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ destacado: nuevoEstado ? 1 : 0 }),
+      });
+    } catch (err) {
+      console.error("Error al actualizar destacado:", err);
+      mostrarNotificacion("No se pudo actualizar el estado de destacado", "error");
+    }
+  }
+
+  // ----- UPDATE ESTADO COMPLETADO -----
+  async function updateEstadoCompletado(oficioId, nuevoEstado) {
+    try {
+      const response = await fetch(`${API_BASE}/oficios/${oficioId}/completado`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+        body: JSON.stringify({ completado: nuevoEstado }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        mostrarNotificacion(data.message, "success");
+      } else {
+        mostrarNotificacion(data.message || "No se pudo actualizar el estado del oficio", "error");
+      }
+    } catch (err) {
+      console.error("Error al actualizar estado completado:", err);
+      mostrarNotificacion("Error al actualizar el estado del oficio", "error");
+    }
+  }
+
+  // ----- ELIMINAR OFICIO -----
+  async function eliminarOficio() {
+    if (!oficioAEliminar) return;
+    try {
+      const response = await fetch(`${API_BASE}/oficios/${oficioAEliminar}`, {
+        method: "DELETE",
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        oficiosCargados = oficiosCargados.filter(o => String(o.id) !== String(oficioAEliminar));
+        aplicarFiltros();
+        mostrarNotificacion("Oficio eliminado correctamente", "success");
+      } else {
+        let txt = 'Error al eliminar el oficio';
+        try {
+          const json = await response.json();
+          if (json && json.message) txt = json.message;
+        } catch (e) {}
+        mostrarNotificacion(txt, "error");
+      }
+    } catch (err) {
+      console.error("Error al eliminar oficio:", err);
+      mostrarNotificacion("Error al eliminar el oficio", "error");
+    } finally {
+      oficioAEliminar = null;
+      const modalEl = document.getElementById("confirmDeleteModal");
+      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+      modal.hide();
+    }
+  }
+
+  // ----- DESCARGAR OFICIO (archivo principal) -----
+  function descargarOficio(oficioId) {
+    const oficio = oficiosCargados.find(o => String(o.id) === String(oficioId));
+    if (!oficio) {
+      mostrarNotificacion("No se pudo encontrar el oficio", "error");
+      return;
+    }
+
+    try {
+      const archivos = parseArchivosField(oficio.archivos);
+      if (archivos.length) {
+        const url = `${API_BASE}/uploads/${archivos[0]}`;
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = archivos[0];
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        mostrarNotificacion("No hay archivos adjuntos para descargar", "error");
+      }
+    } catch (err) {
+      console.error("Error al descargar archivo:", err);
+      mostrarNotificacion("Error al descargar el archivo", "error");
+    }
+  }
+
+  // VISUALIZAR OFICIO (modal) 
+  function visualizarOficio(oficioId) {
+    oficioAVisualizar = oficiosCargados.find(o => String(o.id) === String(oficioId));
+
+    if (!oficioAVisualizar) {
+      mostrarNotificacion("No se pudo cargar la información del oficio", "error");
+      return;
+    }
+
+    const id = oficioAVisualizar.id || "N/A";
+    const numero = oficioAVisualizar.numeroOficio || oficioAVisualizar.folio || oficioAVisualizar.id || "N/A";
+    const asunto = oficioAVisualizar.asunto || "No especificado";
+    const fechaCreacion = oficioAVisualizar.fechaCreacion ? new Date(oficioAVisualizar.fechaCreacion).toLocaleDateString() : "No especificada";
+    const fechaEntrega = oficioAVisualizar.fechaEntrega ? new Date(oficioAVisualizar.fechaEntrega).toLocaleDateString() : "No especificada";
+    const destinatario = oficioAVisualizar.destinatario || oficioAVisualizar.remitente || oficioAVisualizar.de || "No especificado";
+    const observaciones = oficioAVisualizar.observaciones || oficioAVisualizar.descripcion || "No hay observaciones";
+    const archivos = parseArchivosField(oficioAVisualizar.archivos);
+    const prioridadRaw = (oficioAVisualizar.prioridad || "").toString();
+    const prioridadLower = prioridadRaw.toLowerCase();
+    let statusClass = "status-medium";
+    if (prioridadLower === "alta") statusClass = "status-high";
+    else if (prioridadLower === "baja") statusClass = "status-low";
+
+    const ambitoRaw = (oficioAVisualizar.ambito || oficioAVisualizar.ámbito || oficioAVisualizar.scope || "").toString().trim();
+    const ambitoDisplay = ambitoRaw ? (ambitoRaw.charAt(0).toUpperCase() + ambitoRaw.slice(1).toLowerCase()) : "No especificado";
+
+    const modalContent = document.getElementById("viewOficioContent");
+
+    modalContent.innerHTML = `
+      <div class="row">
+        <div class="col-md-6">
+          <div class="detail-group mb-3">
+            <label class="detail-label fw-bold text-vino">Oficio</label>
+            <div class="detail-value">${numero}</div>
+          </div>
+          <div class="detail-group mb-3">
+            <label class="detail-label fw-bold text-vino">Fecha de Creación</label>
+            <div class="detail-value">${fechaCreacion}</div>
+          </div>
+          <div class="detail-group mb-3">
+            <label class="detail-label fw-bold text-vino">Fecha de Entrega</label>
+            <div class="detail-value">${fechaEntrega}</div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          ${prioridadRaw ? `
+            <div class="detail-group mb-3">
+              <label class="detail-label fw-bold text-vino">Prioridad</label>
+              <div class="detail-value">
+                <span class="${statusClass} badge">${prioridadRaw}</span>
+              </div>
+            </div>
+          ` : ''}
+          <div class="detail-group mb-3">
+            <label class="detail-label fw-bold text-vino">Ámbito</label>
+            <div class="detail-value">
+              <span class="badge bg-secondary">${ambitoDisplay}</span>
+            </div>
+          </div>
+          <div class="detail-group mb-3">
+            <label class="detail-label fw-bold text-vino">Destinatario</label>
+            <div class="detail-value">${destinatario}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-group mb-3">
+        <label class="detail-label fw-bold text-vino">ASUNTO</label>
+        <div class="asunto-container p-3 bg-light rounded border">
+          ${asunto}
+        </div>
+      </div>
+
+      <div class="detail-group mb-3">
+        <label class="detail-label fw-bold text-vino">OBSERVACIONES</label>
+        <div class="observaciones-container p-3 bg-light rounded border">
+          ${observaciones}
+        </div>
+      </div>
+
+      <div class="detail-group">
+        <label class="detail-label fw-bold text-vino">ARCHIVOS ADJUNTOS</label>
+        <div class="archivos-container">
+          ${archivos.length > 0 ? archivos.map((archivo, index) => `
+            <div class="archivo-item d-flex justify-content-between align-items-center p-2 bg-light rounded border mb-2">
+              <div class="archivo-info">
+                <i class="bi bi-file-earmark me-2"></i>
+                <span class="archivo-nombre">${archivo}</span>
+              </div>
+              <div>
+                <button class="btn btn-sm btn-outline-primary btn-descargar-archivo" data-archivo="${archivo}">
+                  <i class="bi bi-download"></i> Descargar
+                </button>
+              </div>
+            </div>
+          `).join('') : '<div class="text-muted p-2 bg-light rounded border">No hay archivos adjuntos</div>'}
+        </div>
+      </div>
+    `;
+
+    modalContent.querySelectorAll('.btn-descargar-archivo').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const nombreArchivo = this.getAttribute('data-archivo');
+        const url = `${API_BASE}/uploads/${nombreArchivo}`;
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = nombreArchivo;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+    });
+
+    const modalEl = document.getElementById("viewOficioModal");
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+
+  // ESTADÍSTICAS DE PRIORIDAD 
+  function updateStatNumbers(oficios = []) {
+    const alta = oficios.filter((o) => (o.prioridad || "").toString().toLowerCase() === "alta").length;
+    const media = oficios.filter((o) => (o.prioridad || "").toString().toLowerCase() === "media").length;
+    const baja = oficios.filter((o) => (o.prioridad || "").toString().toLowerCase() === "baja").length;
+    const total = oficios.length;
+
+    const internos = oficios.filter(o => {
+      const ambito = (o.ambito || o.ámbito || o.scope || "").toString().toLowerCase();
+      return ambito === "interno";
+    }).length;
+    
+    const externos = oficios.filter(o => {
+      const ambito = (o.ambito || o.ámbito || o.scope || "").toString().toLowerCase();
+      return ambito === "externo";
+    }).length;
+    
+    const completados = oficios.filter(o => {
+      const estado = o.estado;
+      if (estado === true || estado === false) {
+        return estado === true;
+      }
+      if (estado === 1 || estado === 0) {
+        return estado === 1;
+      }
+      if (typeof estado === 'string') {
+        return estado.toLowerCase() === 'true' || 
+               estado.toLowerCase() === 'completado' || 
+               estado === '1';
+      }
+      return false;
+    }).length;
+
+    if (document.getElementById("prioAltaNum")) document.getElementById("prioAltaNum").textContent = alta;
+    if (document.getElementById("prioMediaNum")) document.getElementById("prioMediaNum").textContent = media;
+    if (document.getElementById("prioBajaNum")) document.getElementById("prioBajaNum").textContent = baja;
+    if (document.getElementById("prioTodosNum")) document.getElementById("prioTodosNum").textContent = total;
+    if (document.getElementById("internosNum")) document.getElementById("internosNum").textContent = internos;
+    if (document.getElementById("externosNum")) document.getElementById("externosNum").textContent = externos;
+    if (document.getElementById("completadosNum")) document.getElementById("completadosNum").textContent = completados;
+  }
+
+  // ----- RENDER TABLA -----
+  function renderTabla(oficios = [], filtroTipo = "todos") {
+    if (!oficiosBody) return;
+    
+    oficiosBody.innerHTML = "";
+
+    let lista = oficios;
+
+    if (filtroTipo && filtroTipo !== "todos") {
+      if (["alta", "media", "baja"].includes(filtroTipo)) {
+        lista = oficios.filter((o) => (o.prioridad || "").toString().toLowerCase() === filtroTipo.toLowerCase());
+      } else if (filtroTipo === "internos" || filtroTipo === "externos") {
+        lista = oficios.filter(o => {
+          const ambito = (o.ambito || o.ámbito || o.scope || "").toString().toLowerCase();
+          return ambito === filtroTipo.slice(0, -1);
+        });
+      } else if (filtroTipo === "completados") {
+        lista = oficios.filter(o => {
+          const estado = o.estado;
+          if (estado === true || estado === false) {
+            return estado === true;
+          }
+          if (estado === 1 || estado === 0) {
+            return estado === 1;
+          }
+          if (typeof estado === 'string') {
+            return estado.toLowerCase() === 'true' || 
+                   estado.toLowerCase() === 'completado' || 
+                   estado === '1';
+          }
+          return false;
+        });
+      }
+    }
+
+    if (!lista.length) {
+      oficiosBody.innerHTML = `<tr><td colspan="7" class="text-center">No hay oficios disponibles.</td></tr>`;
+      updateStatNumbers(oficiosCargados);
+      return;
+    }
+
+    lista.forEach((oficio) => {
+      const numero = oficio.numeroOficio || oficio.folio || oficio.id || "";
+      const fechaEntrega = oficio.fechaEntrega ? new Date(oficio.fechaEntrega).toLocaleDateString() : "";
+      const fechaCreacion = oficio.fechaCreacion ? new Date(oficio.fechaCreacion).toLocaleDateString() : "";
+      const remitente = oficio.remitente || oficio.de || oficio.destinatario || "";
+      const prioridadRaw = oficio.prioridad || "";
+      const prioridadLower = prioridadRaw.toString().toLowerCase();
+      let statusClass = "status-medium";
+      if (prioridadLower === "alta") statusClass = "status-high";
+      else if (prioridadLower === "baja") statusClass = "status-low";
+
+      const destacado = oficio.destacado === 1 || oficio.destacado === true || oficio.destacado === "1";
+
+      const estaCompletado = (() => {
+        const estado = oficio.estado;
+        if (estado === true || estado === 1) return true;
+        if (typeof estado === 'string') {
+          return estado.toLowerCase() === 'true' || 
+                 estado.toLowerCase() === 'completado' || 
+                 estado === '1';
+        }
+        return false;
+      })();
+
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${numero}</td>
+        <td>${fechaEntrega}</td>
+        <td>${fechaCreacion}</td>
+        <td>${remitente}</td>
+        <td><span class="${statusClass}">${prioridadRaw}</span></td>
+        <td>
+          <button class="btn-star btn btn-sm btn-light ${destacado ? "active" : ""}" data-id="${oficio.id}" title="Destacar">
+            <i class="bi ${destacado ? "bi-star-fill text-warning" : "bi-star"}"></i>
+          </button>
+        </td>
+        <td>
+          <div class="btn-actions d-flex gap-1">
+            <button class="btn btn-sm ${estaCompletado ? 'btn-success' : 'btn-outline-success'} btn-complete" data-id="${oficio.id}" title="${estaCompletado ? 'Completado' : 'Marcar como completado'}">
+              <i class="bi ${estaCompletado ? 'bi-check-circle-fill' : 'bi-check-circle'}"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-primary btn-view" data-id="${oficio.id}" title="Visualizar">
+              <i class="bi bi-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-info btn-download" data-id="${oficio.id}" title="Descargar">
+              <i class="bi bi-download"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${oficio.id}" title="Eliminar">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </td>
+      `;
+      oficiosBody.appendChild(row);
+
+      // [Los event listeners para los botones permanecen igual...]
+      const btnStar = row.querySelector(".btn-star");
+      btnStar.addEventListener("click", async function () {
+        const id = this.getAttribute("data-id");
+        const nuevoEstado = !this.classList.contains("active");
+        this.classList.toggle("active", nuevoEstado);
+        const icon = this.querySelector("i");
+        icon.className = `bi ${nuevoEstado ? "bi-star-fill text-warning" : "bi-star"}`;
+        await updateDestacado(id, nuevoEstado);
+        const idx = oficiosCargados.findIndex((o) => String(o.id) === String(id));
+        if (idx !== -1) {
+          oficiosCargados[idx].destacado = nuevoEstado ? 1 : 0;
+        }
+      });
+
+      const btnComplete = row.querySelector(".btn-complete");
+      btnComplete.addEventListener("click", async function () {
+        const id = this.getAttribute("data-id");
+        const oficio = oficiosCargados.find(o => String(o.id) === String(id));
+        
+        if (!oficio) return;
+
+        const estadoActual = (() => {
+          const estado = oficio.estado;
+          if (estado === true || estado === 1) return true;
+          if (typeof estado === 'string') {
+            return estado.toLowerCase() === 'true' || 
+                   estado.toLowerCase() === 'completado' || 
+                   estado === '1';
+          }
+          return false;
+        })();
+
+        const nuevoEstado = !estadoActual;
+        this.classList.toggle("btn-success", nuevoEstado);
+        this.classList.toggle("btn-outline-success", !nuevoEstado);
+        const icon = this.querySelector("i");
+        icon.className = `bi ${nuevoEstado ? "bi-check-circle-fill" : "bi-check-circle"}`;
+        this.title = nuevoEstado ? "Completado" : "Marcar como completado";
+
+        await updateEstadoCompletado(id, nuevoEstado);
+
+        const idx = oficiosCargados.findIndex((o) => String(o.id) === String(id));
+        if (idx !== -1) {
+          oficiosCargados[idx].estado = nuevoEstado;
+        }
+
+        updateStatNumbers(oficiosCargados);
+      });
+
+      const btnView = row.querySelector(".btn-view");
+      btnView.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        visualizarOficio(id);
+      });
+
+      const btnDownload = row.querySelector(".btn-download");
+      btnDownload.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        descargarOficio(id);
+      });
+
+      const btnDelete = row.querySelector(".btn-delete");
+      btnDelete.addEventListener("click", function () {
+        oficioAEliminar = this.getAttribute("data-id");
+        const oficio = oficiosCargados.find(o => String(o.id) === String(oficioAEliminar));
+        const numeroOficio = oficio ? (oficio.numeroOficio || oficio.id) : "este oficio";
+        document.getElementById("oficioEliminarNumero").textContent = numeroOficio;
+        const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+        modal.show();
+      });
+    });
+
+    updateStatNumbers(oficiosCargados);
+  }
+
+  //  FILTROS (BUSCAR + PRIORIDAD) 
+  function aplicarFiltros() {
+    const textoBusqueda = (buscarBorrador.value || "").toLowerCase();
+    const cardActiva = document.querySelector(".priority-card.active, .category-card.active");
+    const tipoFiltro = cardActiva?.dataset?.priority || cardActiva?.dataset?.category || "todos";
+
+    let filtrados = oficiosCargados.filter((oficio) => {
+      const num = (oficio.numeroOficio || oficio.folio || "").toString().toLowerCase();
+      const remit = (oficio.remitente || oficio.de || oficio.destinatario || "").toString().toLowerCase();
+      const dest = (oficio.destinatario || "").toString().toLowerCase();
+      const asunto = (oficio.asunto || "").toString().toLowerCase();
+
+      const coincideTexto =
+        num.includes(textoBusqueda) ||
+        remit.includes(textoBusqueda) ||
+        dest.includes(textoBusqueda) ||
+        asunto.includes(textoBusqueda);
+
+      return coincideTexto;
+    });
+
+    renderTabla(filtrados, tipoFiltro);
+  }
+
+  // ----- CARGAR OFICIOS DESDE LA API -----
+  async function cargarOficios() {
+    try {
+      if (oficiosBody) {
+        oficiosBody.innerHTML = `<tr><td colspan="7" class="text-center">Cargando oficios...</td></tr>`;
+      }
+      const resp = await fetch(`${API_BASE}/oficios`, { credentials: 'include' });
+      if (!resp.ok) throw new Error("Error al obtener oficios: " + resp.status);
+      oficiosCargados = await resp.json();
+      console.log('Oficios cargados:', oficiosCargados);
+      aplicarFiltros();
+    } catch (err) {
+      console.error("Error al cargar oficios:", err);
+      if (oficiosBody) {
+        oficiosBody.innerHTML = `<tr><td colspan="7" class="text-center text-danger">No se pudieron cargar los oficios.</td></tr>`;
+      }
+      mostrarNotificacion("No se pudieron cargar los oficios. Revisa la conexión con el servidor.", "error");
+    }
+  }
+
+  // ----- EVENTOS UI -----
+  if (buscarBorrador) {
+    buscarBorrador.addEventListener("input", aplicarFiltros);
+  }
+
+  if (priorityCards.length > 0) {
+    priorityCards.forEach((card) => {
+      card.addEventListener("click", function () {
+        document.querySelectorAll(".priority-card, .category-card").forEach((c) => c.classList.remove("active"));
+        this.classList.add("active");
+        aplicarFiltros();
+      });
+    });
+  }
+
+  if (categoryCards.length > 0) {
+    categoryCards.forEach((card) => {
+      card.addEventListener("click", function () {
+        document.querySelectorAll(".priority-card, .category-card").forEach((c) => c.classList.remove("active"));
+        this.classList.add("active");
+        aplicarFiltros();
+      });
+    });
+  }
+
+  // Confirm delete
+  const btnConfirmDelete = document.getElementById("btnConfirmDelete");
+  if (btnConfirmDelete) {
+    btnConfirmDelete.addEventListener("click", eliminarOficio);
+  }
+
+  // Descargar desde modal
+  const btnDownloadFromModal = document.getElementById("btnDownloadFromModal");
+  if (btnDownloadFromModal) {
+    btnDownloadFromModal.addEventListener("click", function () {
+      if (oficioAVisualizar) {
+        descargarOficio(oficioAVisualizar.id);
+        const modalEl = document.getElementById("viewOficioModal");
+        const modal = bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+      }
+    });
+  }
+
+  // Inicializar tutorial y cargar oficios
+  agregarBotonTutorial();
+  cargarOficios();
+  
+  // Opcional: iniciar tutorial automáticamente en primera visita
+  // iniciarTutorialAutomatico();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,366 @@
+/* Estilos generales para la página de crear usuario */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Botón abrir/cerrar menú (móviles) */
+#btn_open {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    display: none;
+    background-color: #691B31;
+    border-color: #691B31;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+#btn_open:hover {
+    background-color: #551429;
+    border-color: #551429;
+}
+
+/* Contenedor principal */
+.container {
+    margin-left: 250px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    min-height: 100vh;
+}
+
+.container.expanded {
+    margin-left: 0;
+}
+
+/* Contenedor blanco del formulario */
+.white-container {
+    background: white;
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #691B31;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Título de la página */
+.page-title {
+    color: #691B31;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 2.2em;
+    border-bottom: 3px solid #D4AF37;
+    padding-bottom: 15px;
+}
+
+/* Descripción */
+.white-container p {
+    color: #6c757d !important;
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 30px !important;
+}
+
+/* Formularios y inputs */
+.form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 12px 15px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.form-control:focus {
+    border-color: #691B31;
+    box-shadow: 0 0 0 0.3rem rgba(105, 27, 49, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-control::placeholder {
+    color: #adb5bd;
+}
+
+/* Select personalizado */
+.form-control:is(select) {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23691B31' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 40px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* File input personalizado */
+.form-control[type="file"] {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+}
+
+.form-control[type="file"]::file-selector-button {
+    background-color: #691B31;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-control[type="file"]::file-selector-button:hover {
+    background-color: #551429;
+}
+
+/* Botón principal */
+.btn-primary {
+    background: linear-gradient(135deg, #691B31, #8a2444);
+    border: none;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #551429, #691B31);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(105, 27, 49, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Validación */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.is-invalid:focus {
+    box-shadow: 0 0 0 0.3rem rgba(220, 53, 69, 0.1) !important;
+}
+
+.invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.875em;
+    margin-top: -15px;
+    margin-bottom: 15px;
+}
+
+.is-invalid ~ .invalid-feedback {
+    display: block;
+}
+
+/* Contraseña strength indicator */
+.password-strength {
+    height: 5px;
+    border-radius: 5px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.strength-weak { background-color: #dc3545; width: 25%; }
+.strength-fair { background-color: #ffc107; width: 50%; }
+.strength-good { background-color: #28a745; width: 75%; }
+.strength-strong { background-color: #20c997; width: 100%; }
+
+/* Notificaciones */
+.alert {
+    border-radius: 8px;
+    border: none;
+    font-weight: 500;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Preview de imagen */
+.image-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #691B31;
+    margin: 0 auto 20px;
+    display: none;
+}
+
+/* Grupo de contraseña */
+.password-group {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.toggle-password:hover {
+    color: #691B31;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .container {
+        margin-left: 0;
+        padding: 15px;
+    }
+    
+    #btn_open {
+        display: flex;
+    }
+    
+    .white-container {
+        padding: 30px 25px;
+        margin: 15px auto;
+    }
+    
+    .page-title {
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .white-container {
+        padding: 25px 20px;
+        border-radius: 10px;
+    }
+    
+    .page-title {
+        font-size: 1.6em;
+    }
+    
+    .form-control {
+        padding: 10px 12px;
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding: 8px;
+    }
+    
+    .white-container {
+        padding: 20px 15px;
+    }
+    
+    .page-title {
+        font-size: 1.4em;
+    }
+    
+    .form-control {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+    
+    .btn-primary {
+        padding: 12px 15px;
+        font-size: 1em;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.white-container {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Mejoras visuales adicionales */
+.min-vh-100 {
+    min-height: 100vh !important;
+}
+
+.order-1 {
+    order: 1;
+}
+
+.order-lg-2 {
+    order: 2;
+}
+
+/* Scroll personalizado */
+.white-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.white-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.white-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.white-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Efectos hover mejorados */
+.form-control:hover {
+    border-color: #adb5bd;
+}
+
+/* Transiciones suaves */
+.form-control, .btn-primary, .white-container {
+    transition: all 0.3s ease;
+}
+/* Estilos para el modal de confirmación personalizado (opcional) */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}

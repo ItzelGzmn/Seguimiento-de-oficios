@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seguimiento de oficios - Calendario</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <!-- FullCalendar -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <link rel="stylesheet" href="css/calendario.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css">
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/js/shepherd.min.js"></script>
+</head>
+
+<body id="body">
+  <!-- Overlay para móviles -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Botón para abrir/cerrar menú (móvil) -->
+  <button id="btn_open" class="btn" aria-label="Abrir menú lateral">
+    <i class="bi bi-list"></i>
+  </button>
+
+  <!-- Sidebar -->
+<div id="menu_side" class="menu__side sidebar d-flex flex-column">
+    <img src="img/logo.webp" alt="Logo" style="width:120px; margin:0 auto 20px auto; display:block;">
+    <a href="inicio.html" class="btn btn-menu mb-2"><i class="bi bi-house me-2"></i> Inicio</a>
+    <a href="subiroficios.html" class="btn btn-menu mb-2"><i class="bi bi-upload me-2"></i> Subir oficios</a>
+    <a href="destacados.html" class="btn btn-menu mb-2"><i class="bi bi-star me-2"></i> Destacados</a>
+    <a href="borradores.html" class="btn btn-menu mb-2"><i class="bi bi-file-earmark me-2"></i> Borradores</a>
+    <a href="calendario.html" class="btn btn-menu mb-2 btn-active"><i class="bi bi-calendar me-2"></i> Calendario</a>
+    <a href="#" id="logoutBtn" class="btn btn-menu mt-auto logout-btn">
+    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+</a>
+</div>
+  <!-- Contenido principal -->
+  <div class="content">
+    <div class="white-container mb-4">
+      <h1 id="main-title">
+        <i class="bi bi-calendar-event" style="color: #691B31;"></i> Calendario de Oficios
+      </h1>
+      <p class="text-muted">Visualiza y gestiona tus oficios y eventos</p>
+
+      <!-- Leyenda mejorada -->
+      <div class="d-flex flex-wrap gap-3 mt-3">
+        <div class="d-flex align-items-center"><span class="badge bg-primary me-2">&nbsp;&nbsp;</span><small>Eventos</small></div>
+        <div class="d-flex align-items-center"><span class="badge badge-oficio me-2">&nbsp;&nbsp;</span><small>Oficios</small></div>
+      </div>
+
+      <!-- Botón agregar evento -->
+      <button class="btn btn-agregar mt-3" data-bs-toggle="modal" data-bs-target="#addEventModal" aria-label="Agregar nuevo evento">
+        <i class="bi bi-plus-circle"></i> Agregar Evento 
+      </button>
+    </div>
+
+    <!-- Calendario -->
+    <div class="calendar-container">
+      <div id="calendar"></div>
+    </div>
+  </div>
+
+  <!-- Modal Detalles del evento -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventModalLabel">Detalles</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+  <div class="mb-2">
+    <span id="eventType" class="badge bg-primary">Evento</span>
+  </div>
+  <p><strong>Título:</strong> <span id="eventTitle"></span></p>
+  <p><strong>Fecha:</strong> <span id="eventDate"></span></p>
+  <p><strong>Ubicación:</strong> <span id="eventLocation"></span></p>
+  <p><strong>Descripción:</strong> <span id="eventDescription"></span></p>
+  <p><strong>Prioridad:</strong> <span id="eventPriority" class="badge">Media</span></p>
+
+  <!--sección de archivos adjuntos -->
+  <div id="eventAttachments" class="mt-3"></div>
+</div>
+
+        <div class="modal-footer">
+          <a id="viewOficioBtn" href="#" target="_blank" class="btn btn-primary d-none">
+            <i class="bi bi-file-earmark-text"></i> Ver Oficio
+          </a>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Agregar evento -->
+  <div class="modal fade" id="addEventModal" tabindex="-1" aria-labelledby="addEventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addEventModalLabel">Nuevo Elemento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="eventoForm" enctype="multipart/form-data" class="card p-4 shadow">
+            <div class="mb-3">
+              <label for="tipoElemento" class="form-label">Tipo *</label>
+              <select id="tipoElemento" name="tipoElemento" class="form-select" required>
+                <option value="evento">Evento</option>
+                <option value="oficio">Tarea</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Título *</label>
+              <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="start" class="form-label">Fecha y Hora *</label>
+              <input type="datetime-local" id="start" name="start" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="location" class="form-label">Ubicación</label>
+              <input type="text" id="location" name="location" class="form-control">
+            </div>
+
+            <div class="mb-3">
+              <label for="descripcion" class="form-label">Descripción</label>
+              <textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="priority" class="form-label">Prioridad</label>
+              <select id="priority" name="priority" class="form-select">
+                <option value="Media" selected>Media</option>
+                <option value="Alta">Alta</option>
+                <option value="Baja">Baja</option>
+              </select>
+            </div>
+
+            <div class="mb-3" id="documentoContainer">
+              <label for="documento" class="form-label">Documento</label>
+              <input type="file" id="documento" name="documento" class="form-control" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+              <div class="form-text">Formatos aceptados: PDF, Word, JPG, PNG</div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+          <div id="msg" class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // === Variables globales ===
+    const btnOpen = document.getElementById("btn_open");
+    const sideMenu = document.getElementById("menu_side");
+    const body = document.getElementById("body");
+    const overlay = document.getElementById("overlay");
+    const addEventModal = new bootstrap.Modal(document.getElementById('addEventModal'));
+    const tipoElementoSelect = document.getElementById('tipoElemento');
+    const documentoContainer = document.getElementById('documentoContainer');
+    const logoutBtn = document.getElementById("logoutBtn"); 
+    let calendar;
+
+    // ----- FUNCIÓN DE LOGOUT -----
+    /**
+     * Función reutilizable para cerrar sesión con confirmación y manejo de errores
+     */
+    async function logout(redirectUrl = 'index.html', confirmMessage = '¿Estás seguro de que deseas cerrar sesión?') {
+        // Verificar que SweetAlert2 esté disponible
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert2 no está cargado');
+            if (confirm(confirmMessage)) {
+                clearUserData();
+                window.location.href = redirectUrl;
+            }
+            return;
+        }
+
+        try {
+            const result = await Swal.fire({
+                title: 'Cerrar sesión',
+                text: confirmMessage,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6f7271',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!result.isConfirmed) {
+                return false;
+            }
+
+            // Mostrar loading
+            Swal.fire({
+                title: 'Cerrando sesión...',
+                text: 'Por favor espere',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Limpiar datos locales inmediatamente
+            clearUserData();
+
+            // Intentar logout en el backend (pero no bloquear si falla)
+            fetch('/auth/logout', { 
+                method: 'POST', 
+                credentials: 'include' 
+            })
+            .then(response => {
+                console.log('Logout backend exitoso');
+            })
+            .catch(error => {
+                console.warn('Error en logout backend:', error);
+            })
+            .finally(() => {
+                // Redirigir después de 1 segundo
+                setTimeout(() => {
+                    Swal.close();
+                    window.location.href = redirectUrl;
+                }, 1000);
+            });
+
+            return true;
+
+        } catch (error) {
+            console.error('Error durante el logout:', error);
+            
+            // Fallback: limpiar y redirigir
+            clearUserData();
+            window.location.href = redirectUrl;
+            return false;
+        }
+    }
+
+    /**
+     * Limpia todos los datos de usuario del almacenamiento local
+     */
+    function clearUserData() {
+        console.log('Limpiando datos de usuario...');
+        
+        // Limpiar localStorage
+        localStorage.clear();
+        
+        // Limpiar sessionStorage
+        sessionStorage.clear();
+        
+        // Limpiar cookies específicas
+        clearCookies();
+    }
+
+    /**
+     * Limpia las cookies relacionadas con la autenticación
+     */
+    function clearCookies() {
+        const cookies = document.cookie.split(";");
+        const domain = window.location.hostname;
+        
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            
+            // Eliminar cookies de autenticación
+            if (name.includes('auth') || name.includes('session') || name.includes('token')) {
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${domain}`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            }
+        }
+    }
+
+    // ----- EVENT LISTENER PARA LOGOUT -----
+    if (logoutBtn) {
+        console.log('Botón de logout encontrado, agregando event listener...');
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Clic en botón de logout');
+            logout();
+        });
+    } else {
+        console.error('Botón de logout no encontrado. Buscando elemento con id="logoutBtn"');
+    }
+
+    // TUTORIAL CON SHEPHERD.JS 
+    function inicializarTutorial() {
+        const tour = new Shepherd.Tour({
+            defaultStepOptions: {
+                cancelIcon: { enabled: true },
+                classes: 'shadow-lg bg-white rounded p-3',
+                scrollTo: { behavior: 'smooth', block: 'center' },
+            },
+            useModalOverlay: true,
+        });
+
+        tour.addStep({
+            id: 'step-1',
+            text: 'Bienvenido al Calendario de Oficios 📅 Aquí puedes visualizar y gestionar todos tus oficios y eventos en una vista organizada.',
+            attachTo: { 
+                element: '#main-title', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-2',
+            text: 'Esta es la leyenda del calendario. Los eventos aparecen en azul y los oficios en color vino. Puedes identificar rápidamente el tipo de cada elemento.',
+            attachTo: { 
+                element: '.d-flex.flex-wrap.gap-3', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-3',
+            text: 'Usa este botón para agregar nuevos eventos u oficios al calendario. Puedes programar reuniones, recordatorios o fechas importantes.',
+            attachTo: { 
+                element: '.btn-agregar', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-4',
+            text: 'Aquí está tu calendario principal. Puedes cambiar entre vistas de mes, semana, día o lista usando los botones de la esquina superior derecha.',
+            attachTo: { 
+                element: '#calendar', 
+                on: 'top' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-5',
+            text: 'Haz clic en cualquier evento u oficio para ver los detalles completos, incluyendo descripción, ubicación, prioridad y archivos adjuntos.',
+            attachTo: { 
+                element: '.fc-event', 
+                on: 'top' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-6',
+            text: 'Al agregar un nuevo elemento, puedes elegir entre Evento (reuniones, recordatorios) o Tarea (oficios con documentos adjuntos).',
+            attachTo: { 
+                element: '#addEventModal', 
+                on: 'top' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-7',
+            text: 'Desde el menú lateral puedes navegar a otras secciones del sistema o cerrar sesión.',
+            attachTo: { 
+                element: '#menu_side', 
+                on: 'right' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Finalizar', 
+                    action: tour.complete 
+                }
+            ]
+        });
+
+        return tour;
+    }
+
+    // ----- BOTÓN PARA INICIAR TUTORIAL -----
+    function agregarBotonTutorial() {
+        // Crear botón flotante para el tutorial
+        const botonTutorial = document.createElement('button');
+        botonTutorial.innerHTML = '<i class="bi bi-question-circle"></i>';
+        botonTutorial.className = 'btn btn-primary position-fixed';
+        botonTutorial.style.cssText = `
+            right: 20px;
+            bottom: 20px;
+            z-index: 1100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        `;
+        botonTutorial.title = 'Iniciar tutorial';
+
+        botonTutorial.addEventListener('click', function() {
+            const tour = inicializarTutorial();
+            tour.start();
+        });
+
+        document.body.appendChild(botonTutorial);
+    }
+
+    // INICIAR TUTORIAL AUTOMÁTICAMENTE 
+    function iniciarTutorialAutomatico() {
+        // Solo iniciar automáticamente si es la primera vez en esta página
+        const tutorialCalendarioVisto = localStorage.getItem('tutorialCalendarioVisto');
+        
+        if (!tutorialCalendarioVisto) {
+            setTimeout(() => {
+                const tour = inicializarTutorial();
+                tour.start();
+                localStorage.setItem('tutorialCalendarioVisto', 'true');
+            }, 1500); // Pequeño delay para que cargue todo
+        }
+    }
+
+    // === Funciones de utilidad ===
+    const utils = {
+        // Validar archivos
+        validarArchivo: (archivo) => {
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 
+                                   'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            const tamanoMaximo = 10 * 1024 * 1024; // 10MB
+            
+            if (!tiposPermitidos.includes(archivo.type)) {
+                return { valido: false, error: 'Tipo de archivo no permitido' };
+            }
+            
+            if (archivo.size > tamanoMaximo) {
+                return { valido: false, error: 'El archivo es demasiado grande (máximo 10MB)' };
+            }
+            
+            return { valido: true };
+        },
+
+        // Formatear fecha
+        formatearFecha: (fecha) => {
+            return fecha ? new Date(fecha).toLocaleString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'No especificada';
+        },
+
+        // Obtener clase CSS para prioridad
+        getClasePrioridad: (prioridad) => {
+            const clases = {
+                'Alta': 'bg-danger',
+                'Media': 'bg-warning', 
+                'Baja': 'bg-success'
+            };
+            return clases[prioridad] || 'bg-secondary';
+        }
+    };
+
+    // === Sidebar móvil ===
+    function toggleSidebar() {
+        if (window.innerWidth <= 992) {
+            body.classList.toggle("body_move");
+            sideMenu.classList.toggle("menu__side_move");
+            overlay.classList.toggle("active");
+        }
+    }
+
+    // === Manejo de archivos adjuntos ===
+    function renderizarArchivos(archivos, contenedor) {
+        contenedor.innerHTML = '';
+
+        if (!archivos || archivos.length === 0) {
+            contenedor.innerHTML = '<small class="text-muted">No hay archivos adjuntos</small>';
+            return;
+        }
+
+        archivos.forEach((file, index) => {
+            if (!file) return;
+            
+            const fileName = typeof file === 'object' ? (file.name || file.filename || file.url) : file;
+            if (!fileName) return;
+            
+            const url = fileName.startsWith('/') ? fileName : 
+                       fileName.startsWith('http') ? fileName : 
+                       `/uploads/${fileName}`;
+            
+            const ext = (fileName.split('.').pop() || '').toLowerCase();
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mt-2';
+
+            const label = document.createElement('div');
+            label.innerHTML = `<strong>Archivo adjunto ${archivos.length > 1 ? index + 1 : ''}:</strong>`;
+            wrapper.appendChild(label);
+
+            // Manejar diferentes tipos de archivos
+            if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                renderizarImagen(url, fileName, wrapper);
+            } else if (ext === 'pdf') {
+                renderizarPDF(url, wrapper);
+            } else {
+                renderizarDescarga(url, fileName, wrapper);
+            }
+
+            contenedor.appendChild(wrapper);
+        });
+    }
+
+    function renderizarImagen(url, fileName, contenedor) {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'Adjunto';
+        img.className = 'img-fluid rounded border';
+        img.style.maxWidth = '200px';
+        img.onerror = function() {
+            this.style.display = 'none';
+            renderizarDescarga(url, fileName, contenedor);
+        };
+        contenedor.appendChild(img);
+    }
+
+    function renderizarPDF(url, contenedor) {
+        const embed = document.createElement('embed');
+        embed.src = url;
+        embed.type = 'application/pdf';
+        embed.width = '100%';
+        embed.height = '200px';
+        embed.className = 'rounded border';
+        contenedor.appendChild(embed);
+    }
+
+    function renderizarDescarga(url, fileName, contenedor) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.className = 'btn btn-outline-primary btn-sm';
+        a.innerHTML = `<i class="bi bi-paperclip"></i> Descargar ${fileName}`;
+        contenedor.appendChild(a);
+    }
+
+    // === Cargar eventos del calendario ===
+    async function cargarEventosCalendario(fetchInfo, successCallback, failureCallback) {
+        try {
+            const [oficios, eventos] = await Promise.all([
+                fetch('/oficios/calendar').then(res => res.json()),
+                fetch('/oficios/calendar/eventos').then(res => res.json())
+            ]);
+
+            console.log('Oficios cargados:', oficios);
+            console.log('Eventos cargados:', eventos);
+
+            const eventosProcesados = [
+                ...procesarOficios(oficios),
+                ...procesarEventos(eventos)
+            ];
+
+            console.log('Todos los eventos procesados:', eventosProcesados);
+            successCallback(eventosProcesados);
+        } catch (err) {
+            console.error("Error cargando eventos:", err);
+            successCallback([]);
+        }
+    }
+
+    function procesarOficios(oficios) {
+        return oficios.map(event => ({
+            id: `oficio_${event.id}`,
+            title: event.title,
+            start: event.start,
+            className: 'fc-event-oficio',
+            extendedProps: {
+                ...event.extendedProps,
+                descripcion: event.extendedProps?.descripcion || event.description || event.extendedProps?.description,
+                archivos: event.archivos || event.extendedProps?.archivos || event.documento || event.extendedProps?.documento || [],
+                location: event.extendedProps?.location || event.ubicacion || event.extendedProps?.ubicacion,
+                priority: event.extendedProps?.priority || event.prioridad || event.extendedProps?.prioridad,
+                tipo: 'oficio'
+            }
+        }));
+    }
+
+    function procesarEventos(eventos) {
+        return eventos.map(event => ({
+            id: `evento_${event.id}`,
+            title: event.title,
+            start: event.start,
+            className: 'fc-event-evento',
+            extendedProps: {
+                ...event.extendedProps,
+                descripcion: event.extendedProps?.descripcion || event.description || event.extendedProps?.description,
+                archivos: event.archivos || event.extendedProps?.archivos || event.documento || event.extendedProps?.documento || [],
+                location: event.extendedProps?.location || event.ubicacion || event.extendedProps?.ubicacion,
+                priority: event.extendedProps?.priority || event.prioridad || event.extendedProps?.prioridad,
+                tipo: 'evento'
+            }
+        }));
+    }
+
+    // === Manejar clic en evento ===
+    function manejarClicEvento(info) {
+        const event = info.event;
+        const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+        const props = event.extendedProps || {};
+
+        console.log('Evento clickeado:', event);
+        console.log('ExtendedProps:', props);
+
+        configurarModal(event, props);
+        modal.show();
+    }
+
+    function configurarModal(event, props) {
+        const esOficio = props.tipo === 'oficio';
+        
+        // Configurar título y tipo
+        document.getElementById('eventModalLabel').textContent = 
+            esOficio ? "Detalles del Oficio" : "Detalles del Evento";
+        
+        const tipoElement = document.getElementById('eventType');
+        tipoElement.textContent = esOficio ? "Oficio" : "Evento";
+        tipoElement.className = esOficio ? "badge badge-oficio" : "badge bg-primary";
+
+        // Configurar contenido
+        document.getElementById('eventTitle').textContent = event.title || '';
+        document.getElementById('eventDate').textContent = utils.formatearFecha(event.start);
+        document.getElementById('eventLocation').textContent = props.location || props.ubicacion || 'No especificada';
+        document.getElementById('eventDescription').textContent = props.descripcion || props.description || 'Sin descripción';
+
+        // Configurar prioridad
+        const priority = props.priority || props.prioridad || "Media";
+        const badge = document.getElementById('eventPriority');
+        badge.textContent = priority;
+        badge.className = `badge ${utils.getClasePrioridad(priority)}`;
+
+        // Configurar archivos adjuntos
+        const archivos = extraerArchivos(props);
+        renderizarArchivos(archivos, document.getElementById('eventAttachments'));
+    }
+
+    function extraerArchivos(props) {
+        let archivos = [];
+        const propiedadesArchivos = ['archivos', 'documento', 'archivo', 'adjuntos', 'adjunto'];
+
+        propiedadesArchivos.forEach(prop => {
+            if (props[prop]) {
+                if (Array.isArray(props[prop])) {
+                    archivos = [...archivos, ...props[prop]];
+                } else if (typeof props[prop] === 'string') {
+                    try {
+                        const parsed = JSON.parse(props[prop]);
+                        if (Array.isArray(parsed)) {
+                            archivos = [...archivos, ...parsed];
+                        } else {
+                            archivos.push(props[prop]);
+                        }
+                    } catch {
+                        archivos.push(props[prop]);
+                    }
+                }
+            }
+        });
+
+        return archivos.filter(archivo => archivo); // Filtrar valores nulos
+    }
+
+    // === Enviar formulario ===
+    async function manejarEnvioFormulario(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const tipoElemento = formData.get('tipoElemento');
+        
+        // Validar archivo si es oficio
+        if (tipoElemento === 'oficio') {
+            const archivo = formData.get('documento');
+            if (archivo && archivo.size > 0) {
+                const validacion = utils.validarArchivo(archivo);
+                if (!validacion.valido) {
+                    mostrarMensaje(`❌ ${validacion.error}`, 'danger');
+                    return;
+                }
+            }
+        }
+
+        await enviarElemento(formData, tipoElemento);
+    }
+
+    async function enviarElemento(formData, tipoElemento) {
+        const cleanFormData = new FormData();
+        cleanFormData.append('title', formData.get('title'));
+        cleanFormData.append('start', formData.get('start'));
+        cleanFormData.append('location', formData.get('location'));
+        cleanFormData.append('descripcion', formData.get('descripcion'));
+        cleanFormData.append('priority', formData.get('priority'));
+        
+        if (tipoElemento === 'oficio' && formData.get('documento')) {
+            cleanFormData.append('documento', formData.get('documento'));
+        }
+
+        try {
+            const endpoint = tipoElemento === 'oficio' ? "/oficios/calendar" : "/oficios/calendar/eventos";
+            const response = await fetch(endpoint, { 
+                method: "POST", 
+                body: cleanFormData 
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Error del servidor");
+            }
+
+            const result = await response.json();
+            agregarEventoCalendario(result, tipoElemento, formData);
+            mostrarMensaje(`✅ ${tipoElemento === 'oficio' ? 'Oficio' : 'Evento'} guardado correctamente`, 'success');
+            resetearFormulario();
+
+        } catch (error) {
+            console.error("Error guardando elemento:", error);
+            mostrarMensaje(`❌ Error al guardar: ${error.message}`, 'danger');
+        }
+    }
+
+    function agregarEventoCalendario(result, tipoElemento, formData) {
+        const newEvent = {
+            id: `${tipoElemento}_${result.id || Date.now()}`,
+            title: formData.get('title'),
+            start: formData.get('start'),
+            className: tipoElemento === 'oficio' ? 'fc-event-oficio' : 'fc-event-evento',
+            extendedProps: {
+                location: formData.get('location'),
+                descripcion: formData.get('descripcion'),
+                priority: formData.get('priority'),
+                tipo: tipoElemento,
+                documento: tipoElemento === 'oficio' && formData.get('documento') ? [formData.get('documento').name] : []
+            }
+        };
+
+        if (result.extendedProps && result.extendedProps.documento) {
+            newEvent.extendedProps.documento = Array.isArray(result.extendedProps.documento) 
+                ? result.extendedProps.documento 
+                : [result.extendedProps.documento];
+        }
+
+        calendar.addEvent(newEvent);
+    }
+
+    function mostrarMensaje(mensaje, tipo) {
+        const msgElement = document.getElementById("msg");
+        msgElement.innerHTML = `<div class="alert alert-${tipo}">${mensaje}</div>`;
+        
+        setTimeout(() => {
+            msgElement.innerHTML = '';
+            addEventModal.hide();
+        }, 3000);
+    }
+
+    function resetearFormulario() {
+        document.getElementById("eventoForm").reset();
+        document.getElementById('tipoElemento').value = 'evento';
+        documentoContainer.style.display = 'none';
+    }
+
+    // === Inicialización ===
+    function inicializarCalendario() {
+        calendar = new FullCalendar.Calendar(document.getElementById("calendar"), {
+            initialView: "dayGridMonth",
+            locale: "es",
+            headerToolbar: {
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
+            },
+            buttonText: {
+                today: "Hoy",
+                month: "Mes",
+                week: "Semana",
+                day: "Día",
+                list: "Lista"
+            },
+            events: cargarEventosCalendario,
+            eventClick: manejarClicEvento
+        });
+
+        calendar.render();
+    }
+
+    // === Event Listeners ===
+    function configurarEventListeners() {
+        btnOpen.addEventListener("click", toggleSidebar);
+        overlay.addEventListener("click", toggleSidebar);
+        
+        tipoElementoSelect.addEventListener('change', function() {
+            documentoContainer.style.display = this.value === 'oficio' ? 'block' : 'none';
+        });
+        
+        document.getElementById("eventoForm").addEventListener("submit", manejarEnvioFormulario);
+    }
+
+    // === Inicializar aplicación ===
+    function inicializar() {
+        configurarEventListeners();
+        inicializarCalendario();
+        agregarBotonTutorial();
+    }
+
+    // Iniciar la aplicación
+    inicializar();
+    
+    // Opcional: iniciar tutorial automáticamente en primera visita
+    // iniciarTutorialAutomatico();
+});
+</script>
+</body>
+</html>

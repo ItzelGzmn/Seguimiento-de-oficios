@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Seguimiento</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Estilos temporales para debug */
+        .debug-border {
+            border: 2px solid red !important;
+        }
+        .debug-bg {
+            background: yellow !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <h2>📋 Sistema de Seguimiento</h2>
+        </div>
+        <div class="nav-menu">
+            <!-- Burbuja de usuario -->
+            <div id="userBubble" class="user-bubble">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <span class="user-name" id="userName">Usuario</span>
+                    <span class="user-email" id="userEmail">email@ejemplo.com</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <!-- Login -->
+        <div id="loginSection" class="login-section">
+            <div class="login-card">
+                <h2>Iniciar Sesión</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña:</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Ingresar</button>
+                </form>
+                <div id="loginMessage" class="message"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboardSection" class="dashboard-section">
+            <div class="welcome-card">
+                <h2>¡Bienvenido al Sistema!</h2>
+                <p id="welcomeMessage">Has iniciado sesión correctamente.</p>
+                <div class="dashboard-actions">
+                    <button onclick="goToOficios()">📄 Ver Oficios</button>
+                    <button onclick="goToUsuarios()">👥 Gestionar Usuarios</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Botón de debug -->
+    <div style="position: fixed; bottom: 10px; right: 10px; z-index: 1000;">
+        <button onclick="debugApp()" style="background: #333; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">
+            🐛 Debug
+        </button>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

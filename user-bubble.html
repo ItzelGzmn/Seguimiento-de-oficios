@@ -1,0 +1,60 @@
+<div id="userBubble" class="user-bubble" style="display: none;">
+    <div class="user-avatar" id="userAvatar">U</div>
+    <div class="user-info">
+        <span class="user-name" id="userName">Usuario</span>
+        <span class="user-email" id="userEmail">email@ejemplo.com</span>
+    </div>
+    <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+</div>
+
+<script>
+// Verificar sesión al cargar la página
+async function checkAuth() {
+    try {
+        const response = await fetch('/auth/check', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.loggedIn) {
+            showUserBubble(data.user);
+        }
+    } catch (error) {
+        console.error('Error verificando autenticación:', error);
+    }
+}
+
+function showUserBubble(user) {
+    const bubble = document.getElementById('userBubble');
+    const avatar = document.getElementById('userAvatar');
+    const name = document.getElementById('userName');
+    const email = document.getElementById('userEmail');
+    
+    // Mostrar información del usuario
+    name.textContent = `${user.nombre} ${user.apellidos}`;
+    email.textContent = user.email;
+    avatar.textContent = `${user.nombre.charAt(0)}${user.apellidos.charAt(0)}`.toUpperCase();
+    
+    // Color aleatorio para el avatar
+    const colors = ['#3B82F6', '#EF4444', '#10B981', '#F59E0B'];
+    const color = colors[user.nombre.charCodeAt(0) % colors.length];
+    avatar.style.backgroundColor = color;
+    
+    bubble.style.display = 'flex';
+}
+
+async function logout() {
+    try {
+        await fetch('/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        window.location.reload();
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+    }
+}
+
+// Verificar autenticación al cargar
+document.addEventListener('DOMContentLoaded', checkAuth);
+</script>

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subir Oficios</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/subiroficios.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css">
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/js/shepherd.min.js"></script>
+</head>
+
+<body id="body">
+  <!-- Botón para abrir/cerrar el menú (solo visible en móviles) -->
+  <button id="btn_open" class="btn btn-secondary">
+    <span class="bi bi-list"></span>
+  </button>
+
+  <!-- Sidebar -->
+<div id="menu_side" class="menu__side sidebar d-flex flex-column">
+    <img src="img/logo.webp" alt="Logo" style="width:120px; margin:0 auto 20px auto; display:block;">
+    <a href="inicio.html" class="btn btn-menu mb-2"><i class="bi bi-house me-2"></i> Inicio</a>
+    <a href="subiroficios.html" class="btn btn-menu mb-2 btn-active"><i class="bi bi-upload me-2"></i> Subir oficios</a>
+    <a href="destacados.html" class="btn btn-menu mb-2"><i class="bi bi-star me-2"></i> Destacados</a>
+    <a href="borradores.html" class="btn btn-menu mb-2"><i class="bi bi-file-earmark me-2"></i> Borradores</a>
+    <a href="calendario.html" class="btn btn-menu mb-2"><i class="bi bi-calendar me-2"></i> Calendario</a>
+   <a href="#" id="logoutBtn" class="btn btn-menu mt-auto logout-btn">
+    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+</a>
+</div>
+  <!-- Contenido principal -->
+  <div class="content">
+    <div class="white-container mb-4">
+      <h1 id="main-title">
+        <i class="bi bi-upload me-2" style="color: #691B31;"></i> Subir Oficios
+      </h1>
+      <p class="text-muted">Complete el formulario para registrar un nuevo oficio</p>
+    </div>
+
+    <!-- Formulario para subir oficios -->
+    <div class="form-container">
+      <form id="oficioForm">
+        <!-- Sección 1: Información básica -->
+        <div class="form-section">
+          <h5 class="form-section-title"><i class="bi bi-info-circle me-2"></i>Información Básica</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="numeroOficio" class="form-label">No. de Oficio <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="numeroOficio" placeholder="Ej: OF-2023-001" required>
+              <div class="invalid-feedback">Por favor ingrese el número de oficio</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="asunto" class="form-label">Asunto <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="asunto" placeholder="Asunto del oficio" required>
+              <div class="invalid-feedback">Por favor ingrese el asunto</div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="fechaCreacion" class="form-label">Fecha de Creación <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="fechaCreacion" required>
+              <div class="invalid-feedback">Por favor seleccione la fecha de creación</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="fechaEntrega" class="form-label">Fecha de Entrega <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" id="fechaEntrega" required>
+              <div class="invalid-feedback">Por favor seleccione la fecha de entrega</div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="prioridad" class="form-label">Prioridad <span class="text-danger">*</span></label>
+              <select class="form-control" id="prioridad" required>
+                <option value="">Seleccione prioridad</option>
+                <option value="alta">Alta</option>
+                <option value="media">Media</option>
+                <option value="baja">Baja</option>
+              </select>
+              <div class="invalid-feedback">Por favor seleccione la prioridad</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sección 2: Tipo y destinatario -->
+        <div class="form-section">
+          <h5 class="form-section-title"><i class="bi bi-person me-2"></i>Tipo y Destinatario</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="tipoOficio" class="form-label">Tipo de oficio <span class="text-danger">*</span></label>
+              <select class="form-control" id="tipoOficio" required>
+                <option value="">Seleccione una opción</option>
+                <option>Oficio</option>
+                <option>Carta</option>
+                <option>Circular</option>
+                <option>Informativo</option>
+                <option>Invitación</option>
+              </select>
+              <div class="invalid-feedback">Por favor seleccione el tipo de oficio</div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Ámbito <span class="text-danger">*</span></label>
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="ambito" id="interno" value="interno" checked required>
+                  <label class="form-check-label" for="interno">Interno</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="ambito" id="externo" value="externo" required>
+                  <label class="form-check-label" for="externo">Externo</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="destinatario" class="form-label">Destinatario <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="destinatario" placeholder="Nombre del destinatario" required>
+            <div class="invalid-feedback">Por favor ingrese el destinatario</div>
+          </div>
+          
+          <div class="mb-3">
+       <label for="departamentos" class="form-label">Departamentos destinatarios</label>
+       <select multiple class="form-control selectpicker" data-live-search="true" data-actions-box="true" id="departamentos">
+    <option>Dirección General</option>
+    <option>Asistente de la Dirección General</option>
+    <option>Dto. Evaluación y Seguimiento</option>
+    <option>Auxiliar del Departamento de la Dirección General</option>
+    <option>Recepción Entrada Principal</option>
+    <option>Dirección de Coordinación Financiera y Planeación</option>
+    <option>Subdirector de Administración</option>
+    <option>Recursos Humanos</option>
+    <option>Servicios Generales</option>
+    <option>Archivo</option>
+    <option>Tecnologías de la Información</option>
+    <option>Dirección de Televisión</option>
+    <option>Subdirector de Contenidos</option>
+    <option>Encargada de Departamento de Planeación Postproducción de Televisión</option>
+    <option>Encargado de Departamento de Videoteca</option>
+    <option>Encargado de Área de Deportes</option>
+    <option>Isla Edición de Televisión</option>
+    <option>Cabina de Video</option>
+    <option>Oficialidad de Partes</option>
+       </select>
+        <div class="form-text">Mantén presionada la tecla Ctrl (o Cmd en Mac) para seleccionar múltiples opciones.</div>
+        </div>
+        </div>
+
+        <!-- Sección 3: Contenido y observaciones -->
+        <div class="form-section">
+          <h5 class="form-section-title"><i class="bi bi-chat-text me-2"></i>Contenido y Observaciones</h5>
+          <div class="mb-3">
+            <label for="archivoOficio" class="form-label">Archivo del oficio <span class="text-danger">*</span></label>
+            <input type="file" class="form-control" id="archivoOficio" name="archivoOficio" accept=".pdf,.doc,.docx,.jpg,.png" multiple required>
+            <div class="form-text">Formatos permitidos: PDF, Word, imagen. Tamaño máximo: 10MB por archivo.</div>
+            <!-- Zona de arrastrar y soltar -->
+            <div id="dropZone" style="margin-top:10px;">
+              <div class="text-center py-4">
+                <i class="bi bi-cloud-arrow-up fs-1"></i>
+                <p class="mt-2 mb-0">Arrastra y suelta aquí los archivos para subir</p>
+                <small class="text-muted">o haz clic para seleccionar archivos</small>
+              </div>
+            </div>
+            <div id="listaArchivos" class="mt-3"></div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="observaciones" class="form-label">Observaciones</label>
+            <textarea class="form-control" id="observaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+          </div>
+        </div>
+
+        <!-- Sección 4: Botones de acción -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="reset" class="btn btn-secondary">Limpiar</button>
+          <button type="button" id="guardarBorrador" class="btn btn-outline-primary">Guardar Borrador</button>
+          <button type="submit" class="btn btn-primary">Guardar Información</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-check-circle-fill me-2"></i>Confirmación</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="modalMessage">¿Está seguro de que desea guardar la información?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary" id="confirmAction">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+  const btnOpen = document.getElementById("btn_open");
+  const sideMenu = document.getElementById("menu_side");
+  const body = document.getElementById("body");
+  const form = document.getElementById("oficioForm");
+  const guardarBorradorBtn = document.getElementById("guardarBorrador");
+  const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
+  const confirmActionBtn = document.getElementById('confirmAction');
+  const modalMessage = document.getElementById('modalMessage');
+  const logoutBtn = document.getElementById("logoutBtn"); // Nuevo: botón de logout
+  
+  let currentAction = '';
+
+  // ----- TUTORIAL CON SHEPHERD.JS -----
+  function inicializarTutorial() {
+    const tour = new Shepherd.Tour({
+      defaultStepOptions: {
+        cancelIcon: { enabled: true },
+        classes: 'shadow-lg bg-white rounded p-3',
+        scrollTo: { behavior: 'smooth', block: 'center' },
+      },
+      useModalOverlay: true,
+    });
+
+    tour.addStep({
+      id: 'step-1',
+      text: 'Bienvenido al formulario de subida de oficios 👋 Aquí podrás registrar nuevos oficios en el sistema.',
+      attachTo: { 
+        element: '#main-title', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-2',
+      text: 'Completa la información básica del oficio: número, asunto, fechas y prioridad. Todos los campos marcados con * son obligatorios.',
+      attachTo: { 
+        element: '.form-section:first-child', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-3',
+      text: 'Define el tipo de oficio, ámbito (interno/externo) y selecciona los destinatarios. Puedes elegir múltiples departamentos.',
+      attachTo: { 
+        element: '.form-section:nth-child(2)', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-4',
+      text: 'Sube los archivos del oficio arrastrándolos o haciendo clic. También puedes agregar observaciones adicionales.',
+      attachTo: { 
+        element: '.form-section:last-child', 
+        on: 'bottom' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Siguiente', 
+          action: tour.next 
+        }
+      ]
+    });
+
+    tour.addStep({
+      id: 'step-5',
+      text: 'Puedes guardar como borrador para completar después, o enviar el oficio completo. Usa "Limpiar" para reiniciar el formulario.',
+      attachTo: { 
+        element: '.d-flex.justify-content-end', 
+        on: 'top' 
+      },
+      buttons: [
+        { 
+          text: 'Atrás', 
+          action: tour.back 
+        },
+        { 
+          text: 'Finalizar', 
+          action: tour.complete 
+        }
+      ]
+    });
+
+    return tour;
+  }
+
+  // ----- BOTÓN PARA INICIAR TUTORIAL -----
+  function agregarBotonTutorial() {
+    // Crear botón flotante para el tutorial
+    const botonTutorial = document.createElement('button');
+    botonTutorial.innerHTML = '<i class="bi bi-question-circle"></i>';
+    botonTutorial.className = 'btn btn-primary position-fixed';
+    botonTutorial.style.cssText = `
+      right: 20px;
+      bottom: 20px;
+      z-index: 1100;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+    `;
+    botonTutorial.title = 'Iniciar tutorial';
+
+    botonTutorial.addEventListener('click', function() {
+      const tour = inicializarTutorial();
+      tour.start();
+    });
+
+    document.body.appendChild(botonTutorial);
+  }
+
+  // ----- INICIAR TUTORIAL AUTOMÁTICAMENTE (OPCIONAL) -----
+  function iniciarTutorialAutomatico() {
+    // Solo iniciar automáticamente si es la primera vez en esta página
+    const tutorialSubirVisto = localStorage.getItem('tutorialSubirVisto');
+    
+    if (!tutorialSubirVisto) {
+      setTimeout(() => {
+        const tour = inicializarTutorial();
+        tour.start();
+        localStorage.setItem('tutorialSubirVisto', 'true');
+      }, 1500); // Pequeño delay para que cargue todo
+    }
+  }
+
+  /**
+   * Función reutilizable para cerrar sesión con confirmación y manejo de errores
+   */
+  async function logout(redirectUrl = 'index.html', confirmMessage = '¿Estás seguro de que deseas cerrar sesión?') {
+    try {
+      const result = await Swal.fire({
+        title: 'Cerrar sesión',
+        text: confirmMessage,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6f7271',
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (!result.isConfirmed) {
+        return false;
+      }
+
+      Swal.fire({
+        title: 'Cerrando sesión...',
+        text: 'Por favor espere',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // 1. Cerrar sesión en el backend (si existe)
+      const token = localStorage.getItem('userToken');
+      if (token) {
+        await logoutBackend(token);
+      }
+
+      // 2. Limpiar almacenamiento local sin importar la respuesta del backend
+      clearUserData();
+
+      // 3. Redirigir al usuario
+      setTimeout(() => {
+        Swal.close();
+        window.location.href = redirectUrl;
+      }, 1000);
+      
+      return true;
+
+    } catch (error) {
+      console.error('Error durante el logout:', error);
+      
+      // Mostrar error al usuario pero proceder con el logout del frontend
+      Swal.fire({
+        icon: 'warning',
+        title: 'Aviso',
+        text: 'Error al contactar el servidor, pero se limpiaron los datos locales.',
+        confirmButtonText: 'Aceptar'
+      }).then(() => {
+        clearUserData();
+        window.location.href = redirectUrl;
+      });
+      
+      return false;
+    }
+  }
+
+  /**
+   * Cierra sesión en el backend
+   */
+  async function logoutBackend(token) {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.warn('No se pudo contactar al servidor para cerrar sesión:', error);
+      // No lanzamos error aquí para permitir logout offline
+    }
+  }
+
+  /**
+   * Limpia todos los datos de usuario del almacenamiento local
+   */
+  function clearUserData() {
+    // Limpiar localStorage
+    const itemsToRemove = [
+      'userToken', 'userData', 'session', 'authToken', 
+      'userProfile', 'userPreferences', 'loginTime'
+    ];
+    
+    itemsToRemove.forEach(item => {
+      localStorage.removeItem(item);
+    });
+    
+    // Limpiar sessionStorage
+    sessionStorage.clear();
+    
+    // Limpiar cookies (opcional)
+    clearCookies();
+  }
+
+  /**
+   * Limpia las cookies relacionadas con la autenticación
+   */
+  function clearCookies() {
+    const cookies = document.cookie.split(";");
+    
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+      
+      // Eliminar cookies de autenticación
+      if (name.includes('auth') || name.includes('session') || name.includes('token')) {
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+    }
+  }
+
+  // Función para forzar logout (sin confirmación)
+  async function forceLogout() {
+    Swal.fire({
+      title: 'Sesión expirada',
+      text: 'Su sesión ha expirado. Será redirigido al login.',
+      icon: 'warning',
+      confirmButtonText: 'Aceptar',
+      allowOutsideClick: false
+    }).then(() => {
+      clearUserData();
+      window.location.href = 'index.html';
+    });
+  }
+
+  // ----- EVENT LISTENER PARA LOGOUT -----
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      logout();
+    });
+  }
+
+  // ----- CÓDIGO EXISTENTE DEL FORMULARIO -----
+  
+  // Establecer fecha actual como valor por defecto
+  const fechaCreacion = document.getElementById("fechaCreacion");
+  const hoy = new Date();
+  fechaCreacion.value = hoy.toISOString().split('T')[0];
+  
+  // Validar fecha de entrega >= fecha de creación
+  const fechaEntrega = document.getElementById("fechaEntrega");
+  fechaEntrega.min = fechaCreacion.value;
+  
+  fechaCreacion.addEventListener('change', function() {
+    fechaEntrega.min = this.value;
+  });
+
+  // Abrir / cerrar menú lateral
+  btnOpen.addEventListener("click", function() {
+    body.classList.toggle("body_move");
+    sideMenu.classList.toggle("menu__side_move");
+  });
+
+  window.addEventListener("resize", function () {
+    if (window.innerWidth > 768) {
+      body.classList.remove("body_move");
+      sideMenu.classList.remove("menu__side_move");
+    }
+  });
+
+  // Manejo de archivos
+  const archivoInput = document.getElementById("archivoOficio");
+  const listaArchivos = document.getElementById("listaArchivos");
+  const dropZone = document.getElementById("dropZone");
+  let archivosSeleccionados = [];
+
+  dropZone.addEventListener('click', function() {
+    archivoInput.click();
+  });
+
+  function actualizarListaArchivos() {
+    listaArchivos.innerHTML = "";
+    
+    if (archivosSeleccionados.length === 0) {
+      listaArchivos.innerHTML = '<div class="text-center text-muted py-2">No hay archivos seleccionados</div>';
+      return;
+    }
+    
+    archivosSeleccionados.forEach((file, index) => {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      let iconClass = 'bi-file-earmark';
+      
+      if (['pdf'].includes(fileExtension)) iconClass = 'bi-file-earmark-pdf';
+      else if (['doc', 'docx'].includes(fileExtension)) iconClass = 'bi-file-earmark-word';
+      else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) iconClass = 'bi-file-image';
+      
+      const fileSize = (file.size / 1024 / 1024).toFixed(2);
+      
+      const div = document.createElement('div');
+      div.className = 'file-preview';
+      div.innerHTML = `
+        <div class="file-info">
+          <i class="file-icon bi ${iconClass}"></i>
+          <span>${file.name} <small class="text-muted">(${fileSize} MB)</small></span>
+        </div>
+        <button type="button" class="btn-remove" data-index="${index}">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      `;
+      listaArchivos.appendChild(div);
+    });
+    
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const index = parseInt(this.getAttribute('data-index'));
+        archivosSeleccionados.splice(index, 1);
+        actualizarListaArchivos();
+      });
+    });
+  }
+
+  archivoInput.addEventListener("change", function() {
+    const nuevosArchivos = Array.from(archivoInput.files);
+    for (const file of nuevosArchivos) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`El archivo ${file.name} supera el tamaño máximo permitido de 10MB`);
+        return;
+      }
+    }
+    nuevosArchivos.forEach(nuevo => {
+      if (!archivosSeleccionados.some(f => f.name === nuevo.name && f.size === nuevo.size)) {
+        archivosSeleccionados.push(nuevo);
+      }
+    });
+    actualizarListaArchivos();
+  });
+
+  // Drag & Drop
+  dropZone.addEventListener("dragover", function(e) {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener("dragleave", function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+  });
+  dropZone.addEventListener("drop", function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    let nuevosArchivos = Array.from(e.dataTransfer.files);
+    for (const file of nuevosArchivos) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`El archivo ${file.name} supera el tamaño máximo permitido de 10MB`);
+        return;
+      }
+    }
+    nuevosArchivos.forEach(nuevo => {
+      if (!archivosSeleccionados.some(f => f.name === nuevo.name && f.size === nuevo.size)) {
+        archivosSeleccionados.push(nuevo);
+      }
+    });
+    actualizarListaArchivos();
+  });
+
+  // Validación en tiempo real
+  const inputsRequeridos = form.querySelectorAll('[required]');
+  inputsRequeridos.forEach(input => {
+    input.addEventListener('blur', function() {
+      if (!this.value.trim()) {
+        this.classList.add('is-invalid');
+      } else {
+        this.classList.remove('is-invalid');
+      }
+    });
+  });
+
+  // Validación flexible según acción
+  function validarFormulario(esBorrador = false) {
+    let isValid = true;
+
+    if (!esBorrador) {
+      // Validar campos requeridos
+      inputsRequeridos.forEach(input => {
+        if (!input.value.trim()) {
+          input.classList.add('is-invalid');
+          isValid = false;
+        } else {
+          input.classList.remove('is-invalid');
+        }
+      });
+
+      // Validar archivos
+      if (archivosSeleccionados.length === 0) {
+        alert('Debe seleccionar al menos un archivo');
+        isValid = false;
+      }
+    }
+
+    return isValid;
+  }
+
+  // Envío normal
+  form.addEventListener("submit", function(e) {
+    e.preventDefault();
+    if (validarFormulario(false)) {
+      currentAction = 'submit';
+      modalMessage.textContent = '¿Está seguro de que desea guardar la información del oficio?';
+      confirmModal.show();
+    }
+  });
+
+  // Guardar borrador
+  guardarBorradorBtn.addEventListener("click", function() {
+    if (validarFormulario(true)) {
+      currentAction = 'draft';
+      modalMessage.textContent = '¿Está seguro de que desea guardar el oficio como borrador?';
+      confirmModal.show();
+    }
+  });
+
+  // Confirmar acción
+  confirmActionBtn.addEventListener('click', function() {
+    confirmModal.hide();
+    Swal.fire({
+      title: 'Guardando...',
+      text: 'Por favor espere',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    const formData = new FormData();
+    formData.append('numeroOficio', document.getElementById("numeroOficio").value);
+    formData.append('asunto', document.getElementById("asunto").value);
+    formData.append('fechaCreacion', document.getElementById("fechaCreacion").value);
+    formData.append('fechaEntrega', document.getElementById("fechaEntrega").value);
+    formData.append('prioridad', document.getElementById("prioridad").value);
+    formData.append('tipoOficio', document.getElementById("tipoOficio").value);
+
+    const ambitoSeleccionado = document.querySelector('input[name="ambito"]:checked');
+    formData.append('ambito', ambitoSeleccionado ? ambitoSeleccionado.value : '');
+
+    formData.append('destinatario', document.getElementById("destinatario").value);
+    formData.append('observaciones', document.getElementById("observaciones").value);
+
+    const departamentosSelect = document.getElementById("departamentos");
+    const departamentosSeleccionados = Array.from(departamentosSelect.selectedOptions).map(option => option.value);
+    formData.append('departamentos', JSON.stringify(departamentosSeleccionados));
+
+    archivosSeleccionados.forEach((archivo) => {
+      formData.append(`archivos`, archivo);
+    });
+
+    formData.append('esBorrador', currentAction === 'draft' ? "1" : "0");
+
+    fetch('/oficios/add', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+      return response.json();
+    })
+    .then(data => {
+      Swal.close();
+      if (data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: '¡Éxito!',
+          text: currentAction === 'draft' ? 'Oficio guardado como borrador correctamente' : 'Oficio guardado correctamente',
+          confirmButtonText: 'Aceptar'
+        }).then(() => {
+          // Reset completo
+          form.reset();
+          archivosSeleccionados = [];
+          actualizarListaArchivos();
+          departamentosSelect.selectedIndex = -1;
+          document.querySelectorAll('input[name="ambito"]').forEach(radio => radio.checked = false);
+        });
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: data.message || 'Hubo un error al guardar el oficio'
+        });
+      }
+    })
+    .catch(error => {
+      Swal.close();
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de conexión',
+        text: 'No se pudo conectar con el servidor. Por favor, intente nuevamente.'
+      });
+    });
+  });
+
+  // Inicializar tutorial
+  agregarBotonTutorial();
+  
+  // Opcional: iniciar tutorial automáticamente en primera visita
+  // iniciarTutorialAutomatico();
+});
+</script>
+
+  
+  <!-- SweetAlert2 para notificaciones bonitas -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

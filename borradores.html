@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seguimiento de oficios - Borradores</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/borradores.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/css/shepherd.css">
+<script src="https://cdn.jsdelivr.net/npm/shepherd.js@11.1.1/dist/js/shepherd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body id="body">
+  <!-- Overlay para móviles -->
+  <div class="overlay" id="overlay"></div>
+  
+  <!-- Botón para abrir/cerrar el menú (solo visible en móviles) -->
+  <button id="btn_open" class="btn">
+    <span class="bi bi-list"></span>
+  </button>
+
+ <!-- Sidebar -->
+<div id="menu_side" class="menu__side sidebar d-flex flex-column">
+    <img src="img/logo.webp" alt="Logo" style="width:120px; margin:0 auto 20px auto; display:block;">
+    <a href="inicio.html" class="btn btn-menu mb-2"><i class="bi bi-house me-2"></i> Inicio</a>
+    <a href="subiroficios.html" class="btn btn-menu mb-2"><i class="bi bi-upload me-2"></i> Subir oficios</a>
+    <a href="destacados.html" class="btn btn-menu mb-2"><i class="bi bi-star me-2"></i> Destacados</a>
+    <a href="borradores.html" class="btn btn-menu mb-2 btn-active"><i class="bi bi-file-earmark me-2"></i> Borradores</a>
+    <a href="calendario.html" class="btn btn-menu mb-2"><i class="bi bi-calendar me-2"></i> Calendario</a>
+    <a href="#" id="logoutBtn" class="btn btn-menu mt-auto logout-btn">
+    <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
+</a>
+</div>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    <!-- Contenedor blanco con el título principal -->
+    <div class="white-container mb-4">
+      <h1 id="main-title">
+        <i class="bi bi-file-earmark" style="color: #691B31;"></i> Borradores
+      </h1>
+      <p class="text-muted">Gestiona tus oficios en estado de borrador</p>
+      
+      <!-- Filtros y búsqueda -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="buscarBorrador" class="form-control" placeholder="Buscar borrador...">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <select id="filtroPrioridad" class="form-select">
+            <option value="">Todas las prioridades</option>
+            <option value="alta">Alta</option>
+            <option value="media">Media</option>
+            <option value="baja">Baja</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button id="btnLimpiarFiltros" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-clockwise me-2"></i>Limpiar filtros
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de borradores -->
+    <div class="table-container">
+      <table id="tabla-borradores" class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Número de Oficio</th>
+            <th>Asunto</th>
+            <th>Fecha de Creación</th>
+            <th>Fecha de Entrega</th>
+            <th>Prioridad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-borradores">
+          <tr><td colspan="7" class="text-center">Cargando borradores...</td></tr>
+        </tbody>
+      </table>
+      
+      <!-- Paginación -->
+      <nav aria-label="Paginación de borradores" class="mt-4">
+        <ul class="pagination justify-content-center" id="paginacion">
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Modal para editar borrador -->
+  <div class="modal fade" id="editarBorradorModal" tabindex="-1" aria-labelledby="editarBorradorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-vino text-white">
+          <h5 class="modal-title" id="editarBorradorModalLabel">
+            <i class="bi bi-pencil-square me-2"></i>Editar Borrador
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formEditarBorrador">
+            <input type="hidden" id="borradorId">
+            
+            <!-- Sección 1: Información básica -->
+            <div class="form-section">
+              <h5 class="form-section-title"><i class="bi bi-info-circle me-2"></i>Información Básica</h5>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="editNumeroOficio" class="form-label">No. de Oficio</label>
+                  <input type="text" class="form-control" id="editNumeroOficio" placeholder="Ej: OF-2023-001" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="editAsunto" class="form-label">Asunto</label>
+                  <input type="text" class="form-control" id="editAsunto" placeholder="Asunto del oficio" required>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-4 mb-3">
+                  <label for="editFechaCreacion" class="form-label">Fecha de Creación</label>
+                  <input type="date" class="form-control" id="editFechaCreacion" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="editFechaEntrega" class="form-label">Fecha de Entrega</label>
+                  <input type="date" class="form-control" id="editFechaEntrega" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label for="editPrioridad" class="form-label">Prioridad</label>
+                  <select class="form-select" id="editPrioridad" required> 
+                    <option value="">Seleccione prioridad</option>
+                    <option value="alta">Alta</option>
+                    <option value="media">Media</option>
+                    <option value="baja">Baja</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sección 2: Tipo y destinatario -->
+            <div class="form-section">
+              <h5 class="form-section-title"><i class="bi bi-person me-2"></i>Tipo y Destinatario</h5>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="editTipoOficio" class="form-label">Tipo de oficio</label>
+                  <select class="form-select" id="editTipoOficio" required> 
+                    <option value="">Seleccione una opción</option>
+                    <option>Oficio</option>
+                    <option>Carta</option>
+                    <option>Circular</option>
+                    <option>Informativo</option>
+                    <option>Invitación</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Ámbito</label>
+                  <div class="d-flex gap-3">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="editAmbito" id="editInterno" value="interno" checked>
+                      <label class="form-check-label" for="editInterno">Interno</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="editAmbito" id="editExterno" value="externo">
+                      <label class="form-check-label" for="editExterno">Externo</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="editDestinatario" class="form-label">Destinatario</label>
+                <input type="text" class="form-control" id="editDestinatario" placeholder="Nombre del destinatario" required>
+              </div>
+              
+              <div class="mb-3">
+                <label for="editDepartamentos" class="form-label">Departamentos destinatarios</label>
+                <select multiple class="form-select" id="editDepartamentos"> 
+                  <option>Dirección General</option>
+                  <option>Asistente de la Dirección General</option>
+                  <option>Dto. Evaluación y Seguimiento</option>
+                  <option>Auxiliar del Departamento de la Dirección General</option>
+                  <option>Recepción Entrada Principal</option>
+                  <option>Dirección de Coordinación Financiera y Planeación</option>
+                  <option>Subdirector de Administración</option>
+                  <option>Recursos Humanos</option>
+                  <option>Servicios Generales</option>
+                  <option>Archivo</option>
+                  <option>Tecnologías de la Información</option>
+                  <option>Dirección de Televisión</option>
+                  <option>Subdirector de Contenidos</option>
+                  <option>Encargada de Departamento de Planeación Postproducción de Televisión</option>
+                  <option>Encargado de Departamento de Videoteca</option>
+                  <option>Encargado de Área de Deportes</option>
+                  <option>Isla Edición de Televisión</option>
+                  <option>Cabina de Video</option>
+                  <option>Oficialidad de Partes</option>
+                </select>
+                <div class="form-text">Mantén presionada la tecla Ctrl para seleccionar múltiples opciones.</div>
+              </div>
+            </div>
+
+            <!-- Sección 3: Contenido y observaciones -->
+            <div class="form-section">
+              <h5 class="form-section-title"><i class="bi bi-chat-text me-2"></i>Contenido y Observaciones</h5>
+              <div class="mb-3">
+                <label for="editObservaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="editObservaciones" rows="3" placeholder="Observaciones adicionales..."></textarea>
+              </div>
+            </div>
+
+            <!-- Sección 4: Archivos adjuntos -->
+            <div class="form-section">
+              <h5 class="form-section-title"><i class="bi bi-paperclip me-2"></i>Archivos Adjuntos</h5>
+              
+              <!-- Archivos existentes -->
+              <div class="mb-3">
+                <label class="form-label">Archivos actuales</label>
+                <div id="archivosActuales" class="border rounded p-3 bg-light">
+                  <!-- Los archivos existentes se cargarán aquí dinámicamente -->
+                </div>
+              </div>
+              
+              <!-- Agregar nuevo archivo -->
+              <div class="mb-3">
+                <label for="nuevoArchivo" class="form-label">Agregar nuevo archivo</label>
+                <input type="file" class="form-control" id="nuevoArchivo" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                <div class="form-text">Formatos permitidos: PDF, Word, JPG, PNG. Tamaño máximo: 10MB</div>
+              </div>
+              
+              <!-- Previsualización del nuevo archivo -->
+              <div id="previewNuevoArchivo" class="mb-3" style="display: none;">
+                <label class="form-label">Nuevo archivo a agregar:</label>
+                <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                  <span id="nombreNuevoArchivo"></span>
+                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="cancelarNuevoArchivo()">
+                    <i class="bi bi-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-dorado" id="guardarBorrador">Guardar como borrador</button>
+          <button type="button" class="btn btn-vino" id="guardarCambios">Guardar y publicar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmación de eliminación -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-vino text-white">
+          <h5 class="modal-title"><i class="bi bi-exclamation-triangle modal-icon"></i>Confirmar eliminación</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p>¿Estás seguro de que deseas eliminar el borrador <strong id="borradorEliminarNumero">N/A</strong>?</p>
+          <p class="text-muted">Esta acción no se puede deshacer. El borrador será eliminado permanentemente del sistema.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+          <button type="button" id="btnConfirmDelete" class="btn btn-danger">
+            <i class="bi bi-trash me-1"></i> Eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+    // Elementos DOM
+    const tbodyBorradores = document.getElementById("tbody-borradores");
+    const editarBorradorModal = document.getElementById("editarBorradorModal");
+    const btnOpen = document.getElementById("btn_open");
+    const menuSide = document.getElementById("menu_side");
+    const overlay = document.getElementById("overlay");
+    const buscarBorrador = document.getElementById("buscarBorrador");
+    const filtroPrioridad = document.getElementById("filtroPrioridad");
+    const btnLimpiarFiltros = document.getElementById("btnLimpiarFiltros");
+    const paginacion = document.getElementById("paginacion");
+    const guardarCambiosBtn = document.getElementById("guardarCambios");
+    const guardarBorradorBtn = document.getElementById("guardarBorrador");
+    const nuevoArchivoInput = document.getElementById("nuevoArchivo");
+    const logoutBtn = document.getElementById("logoutBtn"); // Nuevo: botón de logout
+    
+    let borradores = {};
+    let borradoresFiltrados = [];
+    let paginaActual = 1;
+    const elementosPorPagina = 10;
+    let borradorAEliminar = null;
+    let nuevoArchivo = null;
+    let archivosAEliminar = [];
+
+    // ----- FUNCIÓN DE LOGOUT -----
+    /**
+     * Función reutilizable para cerrar sesión con confirmación y manejo de errores
+     */
+    async function logout(redirectUrl = 'index.html', confirmMessage = '¿Estás seguro de que deseas cerrar sesión?') {
+        // Verificar que SweetAlert2 esté disponible
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert2 no está cargado');
+            if (confirm(confirmMessage)) {
+                clearUserData();
+                window.location.href = redirectUrl;
+            }
+            return;
+        }
+
+        try {
+            const result = await Swal.fire({
+                title: 'Cerrar sesión',
+                text: confirmMessage,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6f7271',
+                confirmButtonText: 'Sí, cerrar sesión',
+                cancelButtonText: 'Cancelar'
+            });
+
+            if (!result.isConfirmed) {
+                return false;
+            }
+
+            // Mostrar loading
+            Swal.fire({
+                title: 'Cerrando sesión...',
+                text: 'Por favor espere',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Limpiar datos locales inmediatamente
+            clearUserData();
+
+            // Intentar logout en el backend (pero no bloquear si falla)
+            fetch('/auth/logout', { 
+                method: 'POST', 
+                credentials: 'include' 
+            })
+            .then(response => {
+                console.log('Logout backend exitoso');
+            })
+            .catch(error => {
+                console.warn('Error en logout backend:', error);
+            })
+            .finally(() => {
+                // Redirigir después de 1 segundo
+                setTimeout(() => {
+                    Swal.close();
+                    window.location.href = redirectUrl;
+                }, 1000);
+            });
+
+            return true;
+
+        } catch (error) {
+            console.error('Error durante el logout:', error);
+            
+            // Fallback: limpiar y redirigir
+            clearUserData();
+            window.location.href = redirectUrl;
+            return false;
+        }
+    }
+
+    /**
+     * Limpia todos los datos de usuario del almacenamiento local
+     */
+    function clearUserData() {
+        console.log('Limpiando datos de usuario...');
+        
+        // Limpiar localStorage
+        localStorage.clear();
+        
+        // Limpiar sessionStorage
+        sessionStorage.clear();
+        
+        // Limpiar cookies específicas
+        clearCookies();
+    }
+
+    /**
+     * Limpia las cookies relacionadas con la autenticación
+     */
+    function clearCookies() {
+        const cookies = document.cookie.split(";");
+        const domain = window.location.hostname;
+        
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i];
+            const eqPos = cookie.indexOf("=");
+            const name = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+            
+            // Eliminar cookies de autenticación
+            if (name.includes('auth') || name.includes('session') || name.includes('token')) {
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=${domain}`;
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            }
+        }
+    }
+
+    // ----- EVENT LISTENER PARA LOGOUT -----
+    if (logoutBtn) {
+        console.log('Botón de logout encontrado, agregando event listener...');
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Clic en botón de logout');
+            logout();
+        });
+    } else {
+        console.error('Botón de logout no encontrado. Buscando elemento con id="logoutBtn"');
+    }
+
+    // ----- TUTORIAL CON SHEPHERD.JS -----
+    function inicializarTutorial() {
+        const tour = new Shepherd.Tour({
+            defaultStepOptions: {
+                cancelIcon: { enabled: true },
+                classes: 'shadow-lg bg-white rounded p-3',
+                scrollTo: { behavior: 'smooth', block: 'center' },
+            },
+            useModalOverlay: true,
+        });
+
+        tour.addStep({
+            id: 'step-1',
+            text: 'Bienvenido a la sección de Borradores 📝 Aquí puedes gestionar tus oficios que están en estado de borrador.',
+            attachTo: { 
+                element: '#main-title', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-2',
+            text: 'Busca borradores específicos por número de oficio, asunto o destinatario usando esta barra de búsqueda.',
+            attachTo: { 
+                element: '#buscarBorrador', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-3',
+            text: 'Filtra los borradores por prioridad para organizar mejor tu trabajo pendiente.',
+            attachTo: { 
+                element: '#filtroPrioridad', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-4',
+            text: 'Limpia todos los filtros aplicados para ver todos tus borradores nuevamente.',
+            attachTo: { 
+                element: '#btnLimpiarFiltros', 
+                on: 'bottom' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-5',
+            text: 'Aquí verás la lista de todos tus borradores. Puedes editarlos para completarlos o eliminarlos si ya no los necesitas.',
+            attachTo: { 
+                element: '.table-container', 
+                on: 'top' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-6',
+            text: 'Al editar un borrador, puedes completar la información y elegir entre guardar como borrador o publicar como oficio final.',
+            attachTo: { 
+                element: '#editarBorradorModal', 
+                on: 'top' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Siguiente', 
+                    action: tour.next 
+                }
+            ]
+        });
+
+        tour.addStep({
+            id: 'step-7',
+            text: 'Desde el menú lateral puedes navegar a otras secciones del sistema o cerrar sesión.',
+            attachTo: { 
+                element: '#menu_side', 
+                on: 'right' 
+            },
+            buttons: [
+                { 
+                    text: 'Atrás', 
+                    action: tour.back 
+                },
+                { 
+                    text: 'Finalizar', 
+                    action: tour.complete 
+                }
+            ]
+        });
+
+        return tour;
+    }
+
+    // ----- BOTÓN PARA INICIAR TUTORIAL -----
+    function agregarBotonTutorial() {
+        // Crear botón flotante para el tutorial
+        const botonTutorial = document.createElement('button');
+        botonTutorial.innerHTML = '<i class="bi bi-question-circle"></i>';
+        botonTutorial.className = 'btn btn-primary position-fixed';
+        botonTutorial.style.cssText = `
+            right: 20px;
+            bottom: 20px;
+            z-index: 1100;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        `;
+        botonTutorial.title = 'Iniciar tutorial';
+
+        botonTutorial.addEventListener('click', function() {
+            const tour = inicializarTutorial();
+            tour.start();
+        });
+
+        document.body.appendChild(botonTutorial);
+    }
+
+    // ----- INICIAR TUTORIAL AUTOMÁTICAMENTE (OPCIONAL) -----
+    function iniciarTutorialAutomatico() {
+        // Solo iniciar automáticamente si es la primera vez en esta página
+        const tutorialBorradoresVisto = localStorage.getItem('tutorialBorradoresVisto');
+        
+        if (!tutorialBorradoresVisto) {
+            setTimeout(() => {
+                const tour = inicializarTutorial();
+                tour.start();
+                localStorage.setItem('tutorialBorradoresVisto', 'true');
+            }, 1500); // Pequeño delay para que cargue todo
+        }
+    }
+
+    // Funcionalidad del sidebar para móviles
+    function toggleSidebar() {
+        if (window.innerWidth <= 992) {
+            document.body.classList.toggle("body_move");
+            menuSide.classList.toggle("menu__side_move");
+            overlay.classList.toggle("active");
+        }
+    }
+
+    btnOpen.addEventListener("click", toggleSidebar);
+    overlay.addEventListener("click", toggleSidebar);
+
+    // Cerrar sidebar al hacer clic en un enlace (en móviles)
+    document.querySelectorAll(".btn-menu").forEach(link => {
+        link.addEventListener("click", function() {
+            if (window.innerWidth <= 992) {
+                toggleSidebar();
+            }
+        });
+    });
+
+    // Cargar todos los borradores al iniciar
+    async function cargarBorradores() {
+      try {
+        mostrarLoading(true);
+        const res = await fetch("http://localhost:3002/oficios/borradores");
+        
+        if (!res.ok) {
+          throw new Error(`Error ${res.status}: ${res.statusText}`);
+        }
+        
+        const data = await res.json();
+
+        // Guardar en memoria como diccionario por ID
+        borradores = data.reduce((acc, item) => {
+          acc[item.id] = item;
+          return acc;
+        }, {});
+
+        // Aplicar filtros iniciales
+        aplicarFiltros();
+
+      } catch (err) {
+        console.error("Error cargando borradores:", err);
+        tbodyBorradores.innerHTML = `<tr><td colspan="7" class="text-center text-danger">Error al cargar: ${err.message}</td></tr>`;
+      } finally {
+        mostrarLoading(false);
+      }
+    }
+
+    // Mostrar/ocultar loading
+    function mostrarLoading(mostrar = true) {
+      if (mostrar) {
+        tbodyBorradores.innerHTML = `<tr><td colspan="7" class="text-center">
+          <div class="spinner-border text-vino" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </td></tr>`;
+      }
+    }
+
+    // Aplicar filtros y búsqueda
+    function aplicarFiltros() {
+      const textoBusqueda = buscarBorrador.value.toLowerCase();
+      const prioridadSeleccionada = filtroPrioridad.value;
+      
+      // Filtrar borradores
+      borradoresFiltrados = Object.values(borradores).filter(borrador => {
+        const coincideTexto = 
+          (borrador.numeroOficio?.toLowerCase() || '').includes(textoBusqueda) ||
+          (borrador.asunto?.toLowerCase() || '').includes(textoBusqueda) ||
+          (borrador.destinatario?.toLowerCase() || '').includes(textoBusqueda);
+        
+        const coincidePrioridad = !prioridadSeleccionada || borrador.prioridad === prioridadSeleccionada;
+        
+        return coincideTexto && coincidePrioridad;
+      });
+      
+      // Actualizar tabla
+      mostrarBorradoresPagina(1);
+    }
+
+    // Mostrar borradores por página
+    function mostrarBorradoresPagina(pagina) {
+      paginaActual = pagina;
+      const inicio = (pagina - 1) * elementosPorPagina;
+      const fin = inicio + elementosPorPagina;
+      const borradoresPagina = borradoresFiltrados.slice(inicio, fin);
+      
+      // Pintar tabla
+      if (borradoresPagina.length === 0) {
+        tbodyBorradores.innerHTML = `<tr><td colspan="7" class="text-center">No hay borradores que coincidan con los filtros</td></tr>`;
+      } else {
+        tbodyBorradores.innerHTML = borradoresPagina.map((b, i) => {
+          const indiceGlobal = inicio + i + 1;
+          // DEBUG: Ver qué valores tiene prioridad
+          console.log('Borrador:', b.numeroOficio, 'Prioridad:', b.prioridad, 'Tipo:', typeof b.prioridad);
+          // LÓGICA CORREGIDA - más robusta
+          let badgeClass = 'badge-baja'; // valor por defecto
+          if (b.prioridad) {
+            const prioridad = b.prioridad.toLowerCase().trim();
+            if (prioridad === 'alta') {
+              badgeClass = 'badge-alta';
+            } else if (prioridad === 'media') {
+              badgeClass = 'badge-media';
+            }
+          }
+          return `
+            <tr>
+              <td>${indiceGlobal}</td>
+              <td>${b.numeroOficio || '-'}</td>
+              <td>${b.asunto || '-'}</td>
+              <td>${formatearFecha(b.fechaCreacion) || '-'}</td>
+              <td>${formatearFecha(b.fechaEntrega) || '-'}</td>
+              <td><span class="badge ${badgeClass}">${b.prioridad ? b.prioridad.toUpperCase() : '-'}</span></td>
+              <td>
+                <button class="btn btn-sm btn-primary me-1 btn-editar" 
+                  data-bs-toggle="modal" 
+                  data-bs-target="#editarBorradorModal"
+                  data-id="${b.id}">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-sm btn-danger btn-eliminar" 
+                  data-id="${b.id}">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+        // Agregar event listeners a los botones después de crear la tabla
+        document.querySelectorAll('.btn-editar').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            cargarBorradorEnModal(id);
+          });
+        });
+        document.querySelectorAll('.btn-eliminar').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            confirmarEliminacion(id);
+          });
+        });
+      }
+      // Actualizar paginación
+      actualizarPaginacion();
+    }
+
+    // Cargar datos del borrador en el modal
+    function cargarBorradorEnModal(id) {
+      const borrador = borradores[id];
+      if (!borrador) {
+        console.error("No se encontró el borrador", id);
+        return;
+      }
+
+      // Resetear estado
+      archivosAEliminar = [];
+      nuevoArchivo = null;
+      nuevoArchivoInput.value = '';
+      document.getElementById('previewNuevoArchivo').style.display = 'none';
+
+      // Rellenar formulario
+      document.getElementById('borradorId').value = borrador.id;
+      document.getElementById('editNumeroOficio').value = borrador.numeroOficio || '';
+      document.getElementById('editAsunto').value = borrador.asunto || '';
+      document.getElementById('editFechaCreacion').value = borrador.fechaCreacion ? borrador.fechaCreacion.split('T')[0] : '';
+      document.getElementById('editFechaEntrega').value = borrador.fechaEntrega ? borrador.fechaEntrega.split('T')[0] : '';
+      document.getElementById('editPrioridad').value = borrador.prioridad || '';
+      document.getElementById('editTipoOficio').value = borrador.tipoOficio || '';
+      document.getElementById('editDestinatario').value = borrador.destinatario || '';
+      document.getElementById('editObservaciones').value = borrador.observaciones || '';
+
+      // Ámbito
+      if (borrador.ambito === 'interno') {
+        document.getElementById('editInterno').checked = true;
+      } else {
+        document.getElementById('editExterno').checked = true;
+      }
+
+      // Departamentos
+      const selectDepartamentos = document.getElementById('editDepartamentos');
+      for (let i = 0; i < selectDepartamentos.options.length; i++) {
+        selectDepartamentos.options[i].selected = borrador.departamentos?.includes(selectDepartamentos.options[i].text);
+      }
+
+      // Cargar archivos existentes
+      cargarArchivosExistentes(borrador.archivos, borrador.id);
+    }
+
+    // Formatear fecha para mostrar
+    function formatearFecha(fecha) {
+      if (!fecha) return '-';
+      try {
+        const fechaObj = new Date(fecha);
+        if (isNaN(fechaObj.getTime())) return '-';
+        const opciones = { year: 'numeric', month: 'short', day: 'numeric' };
+        return fechaObj.toLocaleDateString('es-ES', opciones);
+      } catch (e) {
+        return '-';
+      }
+    }
+
+    // Actualizar controles de paginación
+    function actualizarPaginacion() {
+      const totalPaginas = Math.ceil(borradoresFiltrados.length / elementosPorPagina);
+      
+      if (totalPaginas <= 1) {
+        paginacion.innerHTML = '';
+        return;
+      }
+      
+      let html = '';
+      
+      // Botón anterior
+      if (paginaActual > 1) {
+        html += `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual - 1}">Anterior</a></li>`;
+      }
+      
+      // Números de página
+      for (let i = 1; i <= totalPaginas; i++) {
+        if (i === paginaActual) {
+          html += `<li class="page-item active"><a class="page-link" href="#">${i}</a></li>`;
+        } else {
+          html += `<li class="page-item"><a class="page-link" href="#" data-pagina="${i}">${i}</a></li>`;
+        }
+      }
+      
+      // Botón siguiente
+      if (paginaActual < totalPaginas) {
+        html += `<li class="page-item"><a class="page-link" href="#" data-pagina="${paginaActual + 1}">Siguiente</a></li>`;
+      }
+      
+      paginacion.innerHTML = html;
+      
+      // Agregar event listeners a los enlaces de paginación
+      paginacion.querySelectorAll('a[data-pagina]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          const pagina = parseInt(this.getAttribute('data-pagina'));
+          mostrarBorradoresPagina(pagina);
+        });
+      });
+    }
+
+    // Confirmar eliminación de borrador
+    function confirmarEliminacion(id) {
+      const borrador = borradores[id];
+      if (!borrador) return;
+
+      borradorAEliminar = id;
+      const numeroOficio = borrador.numeroOficio || borrador.asunto || "este borrador";
+      document.getElementById("borradorEliminarNumero").textContent = numeroOficio;
+      
+      const modal = new bootstrap.Modal(document.getElementById("confirmDeleteModal"));
+      modal.show();
+    }
+
+    // Eliminar borrador
+    async function eliminarBorrador() {
+      if (!borradorAEliminar) return;
+
+      try {
+        const response = await fetch(`http://localhost:3002/oficios/${borradorAEliminar}`, {
+          method: "DELETE"
+        });
+
+        if (response.ok) {
+          // Eliminar de memoria
+          delete borradores[borradorAEliminar];
+          
+          // Aplicar filtros y actualizar tabla
+          aplicarFiltros();
+          
+          mostrarNotificacion("Borrador eliminado correctamente", "success");
+        } else {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
+      } catch (err) {
+        console.error("Error eliminando borrador:", err);
+        mostrarNotificacion("Error al eliminar el borrador", "error");
+      }
+
+      borradorAEliminar = null;
+      const modal = bootstrap.Modal.getInstance(document.getElementById("confirmDeleteModal"));
+      modal.hide();
+    }
+
+    // Función para mostrar notificaciones
+    function mostrarNotificacion(mensaje, tipo) {
+      // Remover notificaciones existentes
+      document.querySelectorAll('.alert-notificacion').forEach(alert => alert.remove());
+      
+      const notificacion = document.createElement("div");
+      notificacion.className = `alert alert-${tipo === 'error' ? 'danger' : 'success'} alert-dismissible fade show alert-notificacion`;
+      notificacion.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          z-index: 1050;
+          min-width: 300px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      `;
+      
+      notificacion.innerHTML = `
+          ${mensaje}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      document.body.appendChild(notificacion);
+      
+      setTimeout(() => {
+          if (notificacion.parentNode) {
+              notificacion.parentNode.removeChild(notificacion);
+          }
+      }, 4000);
+    }
+
+    // Manejar nuevo archivo
+    nuevoArchivoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Validar tamaño (10MB máximo)
+        if (file.size > 10 * 1024 * 1024) {
+          mostrarNotificacion("El archivo es demasiado grande. Máximo 10MB.", "error");
+          this.value = '';
+          return;
+        }
+        
+        // Validar tipo de archivo
+        const allowedTypes = ['application/pdf', 'application/msword', 
+                             'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                             'image/jpeg', 'image/jpg', 'image/png'];
+        if (!allowedTypes.includes(file.type)) {
+          mostrarNotificacion("Tipo de archivo no permitido. Use PDF, Word, JPG o PNG.", "error");
+          this.value = '';
+          return;
+        }
+        
+        nuevoArchivo = file;
+        document.getElementById('nombreNuevoArchivo').textContent = file.name;
+        document.getElementById('previewNuevoArchivo').style.display = 'block';
+      }
+    });
+
+    // Cancelar nuevo archivo - FUNCIÓN CORREGIDA
+    function cancelarNuevoArchivo() {
+      nuevoArchivo = null;
+      nuevoArchivoInput.value = '';
+      document.getElementById('previewNuevoArchivo').style.display = 'none';
+      mostrarNotificacion("Subida de archivo cancelada", "info");
+    }
+
+    // Conectar el botón de cancelar archivo
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnCancelarArchivo = document.getElementById('cancelarNuevoArchivo');
+      if (btnCancelarArchivo) {
+        btnCancelarArchivo.addEventListener('click', cancelarNuevoArchivo);
+      }
+    });
+
+    // Cargar archivos existentes en el modal
+    function cargarArchivosExistentes(archivos, borradorId) {
+      const container = document.getElementById('archivosActuales');
+      
+      if (!archivos || archivos.length === 0) {
+        container.innerHTML = '<div class="text-muted">No hay archivos adjuntos</div>';
+        return;
+      }
+      
+      const archivosArray = typeof archivos === 'string' ? JSON.parse(archivos) : archivos;
+      
+      container.innerHTML = archivosArray.map(archivo => `
+        <div class="d-flex justify-content-between align-items-center p-2 bg-white rounded border mb-2 archivo-item" data-archivo="${archivo}">
+          <div class="archivo-info">
+            <i class="bi bi-file-earmark me-2"></i>
+            <span class="archivo-nombre">${archivo}</span>
+          </div>
+          <div>
+            <a href="http://localhost:3002/uploads/${archivo}" 
+               class="btn btn-sm btn-outline-primary me-1" 
+               target="_blank"
+               download="${archivo}">
+              <i class="bi bi-download"></i>
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-danger btn-eliminar-archivo" data-archivo="${archivo}">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      
+      // Agregar event listeners para eliminar archivos
+      container.querySelectorAll('.btn-eliminar-archivo').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const nombreArchivo = this.getAttribute('data-archivo');
+          eliminarArchivoExistente(nombreArchivo, borradorId);
+        });
+      });
+    }
+
+    // Eliminar archivo existente
+    function eliminarArchivoExistente(nombreArchivo, borradorId) {
+      // Marcar archivo para eliminación
+      archivosAEliminar.push(nombreArchivo);
+      
+      // Ocultar el archivo en la interfaz
+      const archivoElement = document.querySelector(`.archivo-item[data-archivo="${nombreArchivo}"]`);
+      if (archivoElement) {
+        archivoElement.style.display = 'none';
+      }
+      
+      mostrarNotificacion(`Archivo "${nombreArchivo}" marcado para eliminación`, "success");
+    }
+
+    // Validar formulario antes de guardar
+    function validarFormulario() {
+      const form = document.getElementById('formEditarBorrador');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return false;
+      }
+      
+      // Validar fechas
+      const fechaCreacion = document.getElementById('editFechaCreacion').value;
+      const fechaEntrega = document.getElementById('editFechaEntrega').value;
+      
+      if (fechaEntrega && fechaCreacion && new Date(fechaEntrega) < new Date(fechaCreacion)) {
+        mostrarNotificacion("La fecha de entrega no puede ser anterior a la fecha de creación", "error");
+        return false;
+      }
+      
+      return true;
+    }
+
+    // Subir archivo y obtener su nombre - CORREGIDO
+    async function subirArchivo(archivo) {
+      const formData = new FormData();
+      formData.append('archivo', archivo);
+
+      try {
+        // RUTA CORREGIDA: usa /oficios/uploads en lugar de /upload
+        const response = await fetch('http://localhost:3002/oficios/uploads', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Error ${response.status}: ${errorText}`);
+        }
+
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Error al subir archivo');
+        }
+        
+        return result.nombreArchivo;
+      } catch (error) {
+        console.error('Error subiendo archivo:', error);
+        throw new Error(`No se pudo subir el archivo: ${error.message}`);
+      }
+    }
+
+    // Eliminar archivos marcados para eliminación - CORREGIDO
+    async function eliminarArchivosMarcados(borradorId) {
+      for (const archivo of archivosAEliminar) {
+        try {
+          const response = await fetch(`http://localhost:3002/oficios/archivos/${borradorId}/${archivo}`, {
+            method: 'DELETE'
+          });
+          
+          if (!response.ok) {
+            console.error(`Error eliminando archivo ${archivo}:`, await response.text());
+          } else {
+            console.log(`Archivo ${archivo} eliminado correctamente`);
+          }
+        } catch (error) {
+          console.error(`Error eliminando archivo ${archivo}:`, error);
+        }
+      }
+    }
+
+    // Guardar cambios y publicar (ya no es borrador)
+    guardarCambiosBtn.addEventListener("click", async function() {
+      if (!validarFormulario()) return;
+      
+      const id = document.getElementById("borradorId").value;
+      if (!id) {
+        mostrarNotificacion("Error: ID de borrador no válido", "error");
+        return;
+      }
+
+      this.disabled = true;
+      guardarBorradorBtn.disabled = true;
+      
+      mostrarNotificacion("Publicando oficio...", "success");
+
+      try {
+        // Construir objeto con los datos del formulario
+        const datos = {
+          numeroOficio: document.getElementById('editNumeroOficio').value,
+          asunto: document.getElementById('editAsunto').value,
+          fechaCreacion: document.getElementById('editFechaCreacion').value,
+          fechaEntrega: document.getElementById('editFechaEntrega').value,
+          prioridad: document.getElementById('editPrioridad').value,
+          tipoOficio: document.getElementById('editTipoOficio').value,
+          ambito: document.getElementById('editInterno').checked ? 'interno' : 'externo',
+          destinatario: document.getElementById('editDestinatario').value,
+          observaciones: document.getElementById('editObservaciones').value,
+          departamentos: Array.from(document.getElementById('editDepartamentos').selectedOptions).map(opt => opt.text),
+          estado: 'publicado' // Cambiar estado a publicado
+        };
+
+        // Obtener archivos actuales (excluyendo los eliminados)
+        const borradorActual = borradores[id];
+        const archivosActuales = borradorActual?.archivos ? 
+          (typeof borradorActual.archivos === 'string' ? 
+           JSON.parse(borradorActual.archivos) : borradorActual.archivos) : [];
+        
+        const archivosFiltrados = archivosActuales.filter(archivo => 
+          !archivosAEliminar.includes(archivo)
+        );
+
+        // Si hay un nuevo archivo, subirlo primero
+        if (nuevoArchivo) {
+          mostrarNotificacion("Subiendo archivo...", "info");
+          const nombreArchivo = await subirArchivo(nuevoArchivo);
+          archivosFiltrados.push(nombreArchivo);
+        }
+
+        datos.archivos = JSON.stringify(archivosFiltrados);
+
+        // Actualizar el oficio
+        const res = await fetch(`http://localhost:3002/oficios/${id}`, {
+          method: "PUT", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Error ${res.status}: ${errorText}`);
+        }
+        
+        const result = await res.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Error al actualizar oficio');
+        }
+        
+        // Eliminar archivos marcados para eliminación
+        if (archivosAEliminar.length > 0) {
+          await eliminarArchivosMarcados(id);
+        }
+        
+        // Actualizar en memoria
+        borradores[id] = { ...borradores[id], ...datos, esBorrador: 0 };
+        
+        // Aplicar filtros y actualizar tabla (el borrador ya no aparecerá porque cambió de estado)
+        aplicarFiltros();
+        
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(editarBorradorModal);
+        modal.hide();
+        
+        // Mostrar mensaje de éxito
+        mostrarNotificacion("Oficio publicado correctamente", "success");
+        
+      } catch (err) {
+        console.error("Error publicando oficio:", err);
+        mostrarNotificacion(err.message || "Hubo un error al publicar el oficio", "error");
+      } finally {
+        this.disabled = false;
+        guardarBorradorBtn.disabled = false;
+      }
+    });
+
+    // Guardar como borrador (mantener estado borrador)
+    guardarBorradorBtn.addEventListener("click", async function() {
+      if (!validarFormulario()) return;
+      
+      const id = document.getElementById("borradorId").value;
+      if (!id) {
+        mostrarNotificacion("Error: ID de borrador no válido", "error");
+        return;
+      }
+
+      this.disabled = true;
+      guardarCambiosBtn.disabled = true;
+      
+      mostrarNotificacion("Guardando borrador...", "success");
+
+      try {
+        // Construir objeto con los datos del formulario
+        const datos = {
+          numeroOficio: document.getElementById('editNumeroOficio').value,
+          asunto: document.getElementById('editAsunto').value,
+          fechaCreacion: document.getElementById('editFechaCreacion').value,
+          fechaEntrega: document.getElementById('editFechaEntrega').value,
+          prioridad: document.getElementById('editPrioridad').value,
+          tipoOficio: document.getElementById('editTipoOficio').value,
+          ambito: document.getElementById('editInterno').checked ? 'interno' : 'externo',
+          destinatario: document.getElementById('editDestinatario').value,
+          observaciones: document.getElementById('editObservaciones').value,
+          departamentos: Array.from(document.getElementById('editDepartamentos').selectedOptions).map(opt => opt.text),
+          estado: 'borrador' // Mantener estado borrador
+        };
+
+        // Obtener archivos actuales (excluyendo los eliminados)
+        const borradorActual = borradores[id];
+        const archivosActuales = borradorActual?.archivos ? 
+          (typeof borradorActual.archivos === 'string' ? 
+           JSON.parse(borradorActual.archivos) : borradorActual.archivos) : [];
+        
+        const archivosFiltrados = archivosActuales.filter(archivo => 
+          !archivosAEliminar.includes(archivo)
+        );
+
+        // Si hay un nuevo archivo, subirlo primero
+        if (nuevoArchivo) {
+          mostrarNotificacion("Subiendo archivo...", "info");
+          const nombreArchivo = await subirArchivo(nuevoArchivo);
+          archivosFiltrados.push(nombreArchivo);
+        }
+
+        datos.archivos = JSON.stringify(archivosFiltrados);
+
+        // Actualizar el borrador
+        const res = await fetch(`http://localhost:3002/oficios/${id}`, {
+          method: "PUT", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(datos)
+        });
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Error ${res.status}: ${errorText}`);
+        }
+        
+        const result = await res.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Error al guardar borrador');
+        }
+        
+        // Eliminar archivos marcados para eliminación
+        if (archivosAEliminar.length > 0) {
+          await eliminarArchivosMarcados(id);
+        }
+        
+        // Actualizar en memoria
+        borradores[id] = result.data || { ...borradores[id], ...datos };
+        
+        // Aplicar filtros y actualizar tabla
+        aplicarFiltros();
+        
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(editarBorradorModal);
+        modal.hide();
+        
+        // Mostrar mensaje de éxito
+        mostrarNotificacion("Borrador guardado correctamente", "success");
+        
+      } catch (err) {
+        console.error("Error guardando borrador:", err);
+        mostrarNotificacion(err.message || "Hubo un error al guardar el borrador", "error");
+      } finally {
+        this.disabled = false;
+        guardarCambiosBtn.disabled = false;
+      }
+    });
+
+    // Event listener para el botón de eliminar en el modal
+    document.getElementById("btnConfirmDelete").addEventListener("click", eliminarBorrador);
+
+    // Eventos de filtros
+    buscarBorrador.addEventListener('input', aplicarFiltros);
+    filtroPrioridad.addEventListener('change', aplicarFiltros);
+    btnLimpiarFiltros.addEventListener('click', function() {
+      buscarBorrador.value = '';
+      filtroPrioridad.value = '';
+      aplicarFiltros();
+    });
+
+    // Ajustar el sidebar al cambiar el tamaño de la ventana
+    window.addEventListener("resize", function () {
+        if (window.innerWidth > 992) {
+            document.body.classList.remove("body_move");
+            menuSide.classList.remove("menu__side_move");
+            overlay.classList.remove("active");
+        }
+    });
+
+    // Inicializar tutorial y cargar borradores
+    agregarBotonTutorial();
+    cargarBorradores();
+    
+    // Opcional: iniciar tutorial automáticamente en primera visita
+    // iniciarTutorialAutomatico();
+});
+</script>
+</body>
+</html>
